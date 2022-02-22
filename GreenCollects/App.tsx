@@ -1,20 +1,38 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+
+import { NavigationContainer } from "@react-navigation/native";
+import {
+    createNativeStackNavigator,
+    NativeStackNavigationOptions,
+} from "@react-navigation/native-stack";
+
+import * as eva from "@eva-design/eva";
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import { ApplicationProvider, IconRegistry } from "@ui-kitten/components";
+
+import Home from "./component/Home";
+
+// Create a basic stack for all views
+const Stack = createNativeStackNavigator();
+
+// Create the options to apply to all Stack decoration
+const options: NativeStackNavigationOptions = { headerTitleAlign: "center" };
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+    return (
+        <>
+            <IconRegistry icons={EvaIconsPack} />
+            <ApplicationProvider {...eva} theme={eva.light}>
+                <NavigationContainer>
+                    <Stack.Navigator>
+                        <Stack.Screen
+                            name="Accueil"
+                            component={Home}
+                            options={options}
+                        />
+                    </Stack.Navigator>
+                </NavigationContainer>
+            </ApplicationProvider>
+        </>
+    );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
