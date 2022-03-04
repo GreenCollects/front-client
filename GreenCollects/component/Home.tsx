@@ -20,14 +20,13 @@ const Home = (props: any) => {
     return (
         <SafeAreaView style={styles.safecontainer}>
             <View>
-                <TopNavigation title='Accueil'/>
+                <TopNavigation title="Accueil" />
             </View>
             <View style={styles.container}>
                 <Button appearance="outline" accessoryLeft={LoadingIndicator}>
                     En attente...
                 </Button>
             </View>
-            <StatusBar style="auto" />
         </SafeAreaView>
     );
 };

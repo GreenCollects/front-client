@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import tw from "twrnc"
+import tw from "twrnc";
 import { StyleSheet, View } from "react-native";
 import { BottomNavigation, BottomNavigationTab } from "@ui-kitten/components";
 
@@ -16,14 +16,11 @@ const Navbar = ({ navigation, state }: any) => {
     };
 
     return (
-        <View>
         <BottomNavigation selectedIndex={selectedIndex} onSelect={handleSelect}>
             <BottomNavigationTab icon={<CalendarIcon />} title="ORGANISER" />
             <BottomNavigationTab icon={<MapIcon />} title="CARTE" />
             <BottomNavigationTab icon={<PersonIcon />} title="PROFIL" />
         </BottomNavigation>
-        <StatusBar style="auto"/>
-        </View>
     );
 };
 
