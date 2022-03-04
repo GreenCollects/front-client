@@ -1,19 +1,21 @@
 import { Button } from "@ui-kitten/components";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { Alert, StyleSheet, Text } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import environment from "../../environment";
 import login from "../store/reducers/authentication"
+import { RootState } from "../store/Store";
+import { LOGIN, LOGOUT } from "../store/types";
 
 const Login = () => {
     const dispatch = useDispatch();
     const [username, setUsername] = useState('dodo');
     const [password, setPassword] = useState('dorian');
+    const token = useSelector((state: RootState) => state.authentication.token);
 
     var url = environment.SERVER_API_URL + '/api/account/';
 
     const handleLogin = () => {
-        console.log("handleLogin");
-
         fetch(`${url}login/`, {
             method: 'POST',
             headers: {
@@ -25,15 +27,24 @@ const Login = () => {
                 "password": password
             })
         }).then(function(response) {
-            console.log(response.status);
-            // console.log(response.);
-            // dispatch({type: 'login', value: {username: 'dodo', password: 'dorian'}});
+            if (response.ok) {
+                response.json().then(data => {
+                    dispatch({type: LOGIN, value: {username: username, token: data["token"]}});
+                });
+            }
+        }).catch(err => {
+            Alert.alert(
+                "Error : login",
+                err,
+                [
+                    {text: "Cancel", style: "cancel"},
+                    { text: "OK"}
+                ]
+            );
         });
     };
 
     const handleLogout = () => {
-        console.log("handleLogin");
-
         fetch(`${url}logout/`, {
             method: 'POST',
             headers: {
@@ -44,9 +55,16 @@ const Login = () => {
                 "username": username
             })
         }).then(function(response) {
-            console.log(response.status);
-            // console.log(response.);
-            // dispatch({type: 'login', value: {username: 'dodo', password: 'dorian'}});
+            dispatch({type: LOGOUT});
+        }).catch(err => {
+            Alert.alert(
+                "Error : logout",
+                err,
+                [
+                    {text: "Cancel", style: "cancel"},
+                    { text: "OK"}
+                ]
+            );
         });
     };
 
@@ -69,17 +87,33 @@ const Login = () => {
         });
     };
 
+    const styles = StyleSheet.create({
+        baseText: {
+          fontWeight: 'bold',
+          color: 'red'
+        }
+    });
+
     return (
         <>
-            <Button onPress={() => handleLogin()}>
-                Login
-            </Button>
-            <Button onPress={() => handleCreate()}>
-                Create account
-            </Button>
-            <Button onPress={() => handleLogout()}>
-                Disconnect
-            </Button>
+            {
+                token ? (
+                    <Button onPress={() => handleLogout()}>
+                        Logout
+                    </Button>
+                ) : (
+                    <>
+                        <Button onPress={() => handleLogin()}>
+                            Login
+                        </Button>
+                        
+                        <Button onPress={() => handleCreate()}>
+                            Create account
+                        </Button>
+                    </>
+                )
+                
+            }
         </>
     );
 };
