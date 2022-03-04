@@ -52,12 +52,12 @@ const Login = () => {
     };
 
     useEffect(() => {
-        if (usernameErr === '' && passwordErr === '') {
+        if (!usernameErr && !passwordErr) {
             setFormValidated(true);
         } else {
             setFormValidated(false);
         }
-    });
+    }, [usernameErr, passwordErr]);
 
     const handleUsernameFieldChange = (newValue: string) => {
         if (newValue.length < 1){
@@ -70,7 +70,7 @@ const Login = () => {
     }
 
     const handlePasswordFieldChange = (newValue: string) => {
-        if (newValue.length <= 5){
+        if (newValue.length < 5){
             setPasswordErr('Username to short (min 8 character')
         }else{
             setPasswordErr('');
@@ -118,7 +118,7 @@ const Login = () => {
                         />
                         <View style={styles.captionContainer}>
                             <Icon name='alert-circle-outline'/>
-                            <Text style={styles.captionText}>Test {usernameErr}</Text>
+                            <Text>Test {usernameErr}</Text>
                         </View>
 
                         <Input
@@ -127,7 +127,7 @@ const Login = () => {
                         />
                         <View style={styles.captionContainer}>
                             <Icon name='alert-circle-outline'/>
-                            <Text style={styles.captionText}>Test {passwordErr}</Text>
+                            <Text>Test {passwordErr}</Text>
                         </View>
                         
                         <Button onPress={() => handleLogin()} disabled={!formValidated}>
@@ -139,7 +139,6 @@ const Login = () => {
                         </Button>
                     </View>
                 )
-                
             }
         </View>
     );
@@ -147,16 +146,6 @@ const Login = () => {
 
 const styles = StyleSheet.create({
   captionContainer: tailwind`flex flex-1`,
-  captionIcon: {
-    width: 10,
-    height: 10,
-    marginRight: 5
-  },
-  captionText: {
-    fontSize: 12,
-    fontWeight: "400",
-    color: "red",
-  }
 });
 
 export default Login;
