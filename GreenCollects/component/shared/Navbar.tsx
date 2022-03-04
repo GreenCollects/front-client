@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 
 import tw from "twrnc";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { BottomNavigation, BottomNavigationTab } from "@ui-kitten/components";
 
 import { CalendarIcon, MapIcon, PersonIcon } from "../icons/icons";
-import { StatusBar } from "expo-status-bar";
 
 const Navbar = ({ navigation, state }: any) => {
     const [selectedIndex, setSelectedIndex] = useState();
@@ -16,12 +15,20 @@ const Navbar = ({ navigation, state }: any) => {
     };
 
     return (
-        <BottomNavigation selectedIndex={selectedIndex} onSelect={handleSelect}>
+        <BottomNavigation
+            selectedIndex={selectedIndex}
+            onSelect={handleSelect}
+            style={styles.navigation}
+        >
             <BottomNavigationTab icon={<CalendarIcon />} title="ORGANISER" />
             <BottomNavigationTab icon={<MapIcon />} title="CARTE" />
             <BottomNavigationTab icon={<PersonIcon />} title="PROFIL" />
         </BottomNavigation>
     );
 };
+
+const styles = StyleSheet.create({
+    navigation: tw`ios:pb-4`,
+});
 
 export default Navbar;
