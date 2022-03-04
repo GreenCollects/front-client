@@ -5,6 +5,7 @@ import {
   Text,
   Dimensions,
   TouchableOpacity,
+  SafeAreaView
 } from 'react-native';
 
 import MapView, {
@@ -12,6 +13,10 @@ import MapView, {
   Marker,
   AnimatedRegion,
 } from 'react-native-maps';
+
+import TopNavigation from './shared/TopNavigation';
+
+import tw from "twrnc"
 
 const screen = Dimensions.get('window');
 
@@ -64,7 +69,11 @@ class Map extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.safecontainer}>
+      <View>
+          <TopNavigation title='Accueil'/>
+      </View>
+      <View style={styles.mapcontainer}>
         <MapView
           provider={this.props.provider}
           style={styles.map}
@@ -88,6 +97,7 @@ class Map extends React.Component {
           </TouchableOpacity>
         </View>
       </View>
+      </SafeAreaView>
     );
   }
 }
@@ -97,7 +107,7 @@ Map.propTypes = {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  mapcontainer: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'flex-end',
     alignItems: 'center',
@@ -123,6 +133,8 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     backgroundColor: 'transparent',
   },
-});
+    container: tw`flex flex-1 bg-white items-center justify-center`,
+    safecontainer: tw`flex flex-1`,
+  });
 
 export default Map;
