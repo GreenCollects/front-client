@@ -12,7 +12,6 @@ const INITIAL_STATE = {
 const authenticationReducer = (state: any = INITIAL_STATE, action: any) => {
     switch(action.type) {
         case LOGIN: 
-            console.log(action.value);
             var newState: any = {
                 ...state,
                 token: action.value.token,
