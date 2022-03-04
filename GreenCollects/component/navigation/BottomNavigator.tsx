@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React from "react";
 import CollectCreation from "../CollectCreation";
-import Home from "../Home";
+import Map from "../Map";
 import Navbar from "../shared/Navbar";
 import UserProfil from "../UserProfil";
 
@@ -22,8 +22,8 @@ const BottomNavigator = () => {
                 }}
             />
             <BottomTab.Screen
-                name="Home"
-                component={Home}
+                name="Carte"
+                component={Map}
                 options={{
                     title: "Accueil",
                 }}
