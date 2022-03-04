@@ -1,18 +1,19 @@
-import { compose, applyMiddleware, createStore } from "redux";
+import { createStore } from "redux";
 import { persistStore, persistCombineReducers } from "redux-persist";
-import storage from "redux-persist/lib/storage";
-
-import authentication from './reducers/authentication'
+// import storage from "redux-persist/es/storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import authenticationReducer from './reducers/authentication'
 
 const persistConfig = {
     key: 'greencollect-root',
-    storage,
+    storage: AsyncStorage,
 };
 
 const rootReducers = persistCombineReducers(
     persistConfig,
-    {authentication: authentication}
-)
+    {authentication: authenticationReducer}
+);
+export type RootState = ReturnType<typeof rootReducers>
 
 export default () => {
     let store = createStore(rootReducers)

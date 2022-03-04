@@ -1,24 +1,30 @@
-import { useDispatch } from "react-redux";
+import { DefaultRootState, useDispatch } from "react-redux";
 import { combineReducers } from "redux";
-import { LOGIN } from "../types";
+import { LOGIN, LOGOUT } from "../types";
 
 const AUTH_TOKEN_KEY = 'greencollect-authenticationToken';
 
-// fetch("http://localhost:8080/")
-
 const INITIAL_STATE = {
     token: '',
-    login: '',
+    username: '',
 };
 
-const authentication = (state= INITIAL_STATE, action: any) => {
+const authenticationReducer = (state: any = INITIAL_STATE, action: any) => {
     switch(action.type) {
         case LOGIN: 
-            // TODO : update token
-            break;
+            console.log(action.value);
+            var newState: any = {
+                ...state,
+                token: action.value.token,
+                username: action.value.username
+            }
+            return newState;
+        case LOGOUT:
+            var newState: any = INITIAL_STATE
+            return newState;
         default:
             return state
     }
 };
 
-export default authentication;
+export default authenticationReducer;
