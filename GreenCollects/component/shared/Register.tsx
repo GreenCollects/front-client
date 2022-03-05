@@ -1,16 +1,30 @@
-import { Input, Button } from "@ui-kitten/components";
-import { useState } from "react";
-import { Alert } from "react-native";
+import { Input, Button, Text } from "@ui-kitten/components";
+import { useEffect, useState } from "react";
+import { Alert, StyleSheet } from "react-native";
 import environment from "../../environment";
+import tailwind from "twrnc";
 
 const Register = () => {
     var url = environment.SERVER_API_URL + '/api/account/';
 
     const [username, setUsername] = useState('');
+    const [usernameErr, setUsernameErr] = useState('');
     const [password, setPassword] = useState('');
+    const [passwordErr, setPasswordErr] = useState('');
+    const [reapeatPassword, setReapeatPassword] = useState('');
+    const [reapeatPasswordErr, setReapeatPasswordErr] = useState('');
     const [email, setEmail] = useState('');
+    const [emailErr, setEmailErr] = useState('');
     const [first_name, setFirstName] = useState('');
+    const [first_nameErr, setFirstNameErr] = useState('');
     const [last_name, setLastName] = useState('');
+    const [last_nameErr, setLastNameErr] = useState('');
+    const [formValidated, setFormValidated] = useState(false);
+
+    const USR_NAME_MIN_LENGTH = 1;
+    const PWD_MIN_LENGTH = 5;
+    const EMAIL_REGEX_CHECK =
+  /^[A-Za-zÀ-ÿ0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-zÀ-ÿ0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Za-zÀ-ÿ0-9](?:[A-Za-zÀ-ÿ0-9-]*[A-Za-zÀ-ÿ0-9])?\.)+(?:[a-zA-Z]{2}|com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum)\b$/;
 
     const handleRegister = () => {
         fetch(url, {
@@ -40,33 +54,136 @@ const Register = () => {
         });
     };
 
+    useEffect(() => {
+        if (
+            !usernameErr &&
+            !passwordErr &&
+            !reapeatPasswordErr &&
+            !emailErr &&
+            !first_nameErr &&
+            !last_nameErr
+        ) {
+            setFormValidated(true);
+        } else {
+            setFormValidated(false);
+        }
+    }, [usernameErr, passwordErr, reapeatPasswordErr, emailErr, first_nameErr, last_nameErr]);
+
+    const handleUsernameFieldChange = (newValue: string) => {
+        if (newValue.length < USR_NAME_MIN_LENGTH){
+            setUsernameErr('Username to short (min '+ USR_NAME_MIN_LENGTH +' character)')
+        }else{
+            setUsernameErr('');
+        }
+
+        setUsername(newValue);
+    }
+
+    const handlePasswordFieldChange = (newValue: string) => {
+        if (newValue.length < PWD_MIN_LENGTH){
+            setPasswordErr('Password to short (min '+ PWD_MIN_LENGTH +' character)');
+        } else if (newValue !== reapeatPassword) {
+            setPasswordErr('');
+            handleRepeatPasswordFieldChange('');
+        } else{
+            setPasswordErr('');
+        }
+
+        setPassword(newValue);
+    }
+
+    const handleRepeatPasswordFieldChange = (newValue: string) => {
+        if (newValue !== password){
+            setReapeatPasswordErr('Repeated password does not match the password')
+        }else{
+            setReapeatPasswordErr('');
+        }
+
+        setReapeatPassword(newValue);
+    }
+
+    const handleEmailFieldChange = (newValue: string) => {
+        if (!EMAIL_REGEX_CHECK.test(newValue)){
+            setEmailErr('Email does not match the right pattern')
+        }else{
+            setEmailErr('');
+        }
+
+        setEmail(newValue);
+    }
+
+    const handleFirstNameFieldChange = (newValue: string) => {
+        if (newValue.length < USR_NAME_MIN_LENGTH){
+            setFirstNameErr('Username to short (min 1 character')
+        }else{
+            setFirstNameErr('');
+        }
+
+        setFirstName(newValue);
+    }
+    
+    const handleLastNameFieldChange = (newValue: string) => {
+        if (newValue.length < USR_NAME_MIN_LENGTH){
+            setLastNameErr('Username to short (min 1 character')
+        }else{
+            setLastNameErr('');
+        }
+
+        setLastName(newValue);
+    }
+
     return (
         <>
             <Input
                 placeholder='Username'
-                onChangeText={nextValue => setUsername(nextValue)}
+                onChangeText={nextValue => handleUsernameFieldChange(nextValue)}
             />
+            <Text style={styles.error}>{usernameErr}</Text>
+
             <Input
                 placeholder='Email'
-                onChangeText={nextValue => setEmail(nextValue)}
+                onChangeText={nextValue => handleEmailFieldChange(nextValue)}
             />
+            <Text style={styles.error}>{emailErr}</Text>
+
             <Input
                 placeholder='First Name'
-                onChangeText={nextValue => setFirstName(nextValue)}
+                onChangeText={nextValue => handleFirstNameFieldChange(nextValue)}
             />
+            <Text style={styles.error}>{first_nameErr}</Text>
+
             <Input
                 placeholder='Last Name'
-                onChangeText={nextValue => setLastName(nextValue)}
+                onChangeText={nextValue => handleLastNameFieldChange(nextValue)}
             />
+            <Text style={styles.error}>{last_nameErr}</Text>
+
             <Input
+                value={password}
                 placeholder='Password'
-                onChangeText={nextValue => setPassword(nextValue)}
+                onChangeText={nextValue => handlePasswordFieldChange(nextValue)}
             />
-            <Button onPress={() => handleRegister()}>
+            <Text style={styles.error}>{passwordErr}</Text>
+
+            <Input
+                value={reapeatPassword}
+                placeholder='Repeat password'
+                onChangeText={nextValue => handleRepeatPasswordFieldChange(nextValue)}
+            />
+            <Text style={styles.error}>{reapeatPasswordErr}</Text>
+
+            <Button 
+                disabled={!formValidated}
+                onPress={() => handleRegister()}
+            >
                 Register
             </Button>
         </>
     );
 }
+
+const styles = StyleSheet.create({
+    error: tailwind`text-red-600`,
+});
 
 export default Register;

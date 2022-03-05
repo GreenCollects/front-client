@@ -8,6 +8,10 @@ import login from "../store/reducers/authentication"
 import { RootState } from "../store/Store";
 import { LOGIN, LOGOUT } from "../store/types";
 
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Register from "./Register";
+
 const Login = () => {
     const dispatch = useDispatch();
 
@@ -17,6 +21,8 @@ const Login = () => {
     const [passwordErr, setPasswordErr] = useState('');
     const [formValidated, setFormValidated] = useState(false);
 
+    const USR_NAME_MIN_LENGTH = 1;
+    const PWD_MIN_LENGTH = 5;
 
     const token = useSelector((state: RootState) => state.authentication.token);
 
@@ -52,7 +58,11 @@ const Login = () => {
     };
 
     useEffect(() => {
-        if (!usernameErr && !passwordErr) {
+        if (!usernameErr && 
+            !passwordErr &&
+            username.length >= USR_NAME_MIN_LENGTH &&
+            password.length >= PWD_MIN_LENGTH
+        ) {
             setFormValidated(true);
         } else {
             setFormValidated(false);
@@ -60,8 +70,8 @@ const Login = () => {
     }, [usernameErr, passwordErr]);
 
     const handleUsernameFieldChange = (newValue: string) => {
-        if (newValue.length < 1){
-            setUsernameErr('Username to short (min 1 character')
+        if (newValue.length < USR_NAME_MIN_LENGTH){
+            setUsernameErr('Username to short (min '+ USR_NAME_MIN_LENGTH +' character')
         }else{
             setUsernameErr('');
         }
@@ -70,8 +80,8 @@ const Login = () => {
     }
 
     const handlePasswordFieldChange = (newValue: string) => {
-        if (newValue.length < 5){
-            setPasswordErr('Username to short (min 8 character')
+        if (newValue.length < PWD_MIN_LENGTH){
+            setPasswordErr('Username to short (min '+ PWD_MIN_LENGTH +' character)')
         }else{
             setPasswordErr('');
         }
@@ -116,25 +126,28 @@ const Login = () => {
                             placeholder='Username'
                             onChangeText={nextValue => handleUsernameFieldChange(nextValue)}
                         />
-                        <View style={styles.captionContainer}>
-                            <Icon name='alert-circle-outline'/>
-                            <Text>Test {usernameErr}</Text>
+                        <View>
+                            {/* <Icon name='alert-circle-outline'/> */}
+                            <Text style={styles.error}>{usernameErr}</Text>
                         </View>
 
                         <Input
                             placeholder='Password'
                             onChangeText={nextValue => handlePasswordFieldChange(nextValue)}
                         />
-                        <View style={styles.captionContainer}>
-                            <Icon name='alert-circle-outline'/>
-                            <Text>Test {passwordErr}</Text>
+                        <View>
+                            {/* <Icon name='alert-triangle-outline'/> */}
+                            <Text style={styles.error}>{passwordErr}</Text>
                         </View>
                         
                         <Button onPress={() => handleLogin()} disabled={!formValidated}>
                             Login
                         </Button>
                         
-                        <Button disabled={true}>
+                        <Button
+                            disabled={true}
+                            onPress={() => {}}
+                        >
                             Create account (Not Available)
                         </Button>
                     </View>
@@ -145,7 +158,9 @@ const Login = () => {
 };
 
 const styles = StyleSheet.create({
-  captionContainer: tailwind`flex flex-1`,
+    viewContainer: tailwind`flex flex-1`,
+    error: tailwind`text-red-600`,
+    loginContainer: tailwind`w-9/10`,
 });
 
 export default Login;
