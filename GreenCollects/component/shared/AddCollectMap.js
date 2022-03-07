@@ -37,12 +37,14 @@ class Map extends React.Component {
         longitude: LONGITUDE,
       }),
     };
+    // console.log("SETSTATE",this.state.coordinate)
   }
 
   onRegionChange = (region) => {
     this.setState({
       region,
     });
+
   };
 
   render() {

@@ -1,12 +1,12 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import Map from "../Map-Screens/Map";
+import Map from "../map-screens/Map";
 import AddCollectMap from "../shared/AddCollectMap";
-import { AddPoint } from "../Map-Screens/AddPoint";
+import { AddPoint } from "../map-screens/AddPoint";
 
 const Stack = createNativeStackNavigator();
 
-const MapScreen = () => {
+const MapNavigator = () => {
   return (
     <Stack.Navigator initialRouteName="Map">
       <Stack.Screen
@@ -20,4 +20,4 @@ const MapScreen = () => {
   );
 };
 
-export default MapScreen;
+export default MapNavigator;
