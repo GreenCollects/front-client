@@ -20,7 +20,7 @@ const Navbar = ({ navigation, state }: any) => {
             onSelect={handleSelect}
             style={styles.navigation}
         >
-            <BottomNavigationTab icon={<CalendarIcon />} title="ORGANISER" />
+            <BottomNavigationTab icon={<CalendarIcon />} title="ORGANISATION" />
             <BottomNavigationTab icon={<MapIcon />} title="CARTE" />
             <BottomNavigationTab icon={<PersonIcon />} title="PROFIL" />
         </BottomNavigation>
