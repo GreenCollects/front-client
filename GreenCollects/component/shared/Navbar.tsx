@@ -23,6 +23,7 @@ const Navbar = ({ navigation, state }: any) => {
             <BottomNavigationTab icon={<CalendarIcon />} title="ORGANISER" />
             <BottomNavigationTab icon={<MapIcon />} title="CARTE" />
             <BottomNavigationTab icon={<PersonIcon />} title="PROFIL" />
+            <BottomNavigationTab icon={<MapIcon />} title="AddCollect" />
         </BottomNavigation>
     );
 };
