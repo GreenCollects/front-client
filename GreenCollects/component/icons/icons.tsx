@@ -20,3 +20,7 @@ export const MenuIcon = (props: any) => (
 export const InfoIcon = (props: any) => <Icon {...props} name="info" />;
 
 export const LogoutIcon = (props: any) => <Icon {...props} name="log-out" />;
+
+export const ChevronIcon = (props:any) => (
+    <Icon {...props} name='chevron-down-outline' />
+);
