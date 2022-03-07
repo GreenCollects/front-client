@@ -42,8 +42,8 @@ class Map extends React.Component {
 
   onRegionChange = (region) => {
     this.setState({
-      region,
-    });
+      coordinate : region
+    })
 
   };
 
@@ -62,7 +62,8 @@ class Map extends React.Component {
               longitude: LONGITUDE,
               latitudeDelta: LATITUDE_DELTA,
               longitudeDelta: LONGITUDE_DELTA,
-            }}
+              }}
+              onRegionChange={this.onRegionChange}
           ></MapView>
           <View style={styles.markerFixed}>
             <Image style={styles.marker} source={marker} />

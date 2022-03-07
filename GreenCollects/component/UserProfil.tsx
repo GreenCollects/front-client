@@ -6,14 +6,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import tw from "twrnc";
 
 import TopNavigation from "./shared/TopNavigation";
+import ChooseKm from "./filtering/ChooseKm";
 
 // TODO: Change this component to render the real user profil
 const UserProfil = (props: any) => {
     return (
-        <SafeAreaView>
+        <SafeAreaView style={styles.safecontainer}>
             <View>
                 <TopNavigation title="Mon profil" />
             </View>
+
             <Text>Hello User Profil</Text>
         </SafeAreaView>
     );

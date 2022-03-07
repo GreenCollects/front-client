@@ -16,7 +16,11 @@ export const AddPoint = (props: any) => {
   const [labels, setLabels] = useState([]);
 
   const [selectedLabels, setSelectedLabels] = useState([]);
-  const [locationValue, setLocationValue] = useState("");
+  const [locationValue, setLocationValue] = useState({
+    locality: "",
+    postalCode: "",
+    address: "",
+  });
 
   const [error, setError] = useState("");
 
@@ -28,7 +32,12 @@ export const AddPoint = (props: any) => {
     const currentDate = new Date();
     currentDate.toLocaleDateString("fr");
 
-    if (locationValue !== "" && selectedLabels.length !== 0) {
+    if (
+      locationValue.address !== "" &&
+      locationValue.postalCode !== "" &&
+      locationValue.locality !== "" &&
+      selectedLabels.length !== 0
+    ) {
       setError("");
     } else {
       setError("Aucun des champs ne doit être vide.");
@@ -74,11 +83,36 @@ export const AddPoint = (props: any) => {
             </Select>
           </View>
           <View style={styles.formLocation}>
-            <Text style={styles.positionLabel}>Lieu du point de collect</Text>
+            <View style={tw`flex flex-row`}>
+              <View style= {tw`flex flex-1`}>
+                <Text style={styles.positionLabel}>
+                  Ville
+                </Text>
+                <Input
+                  placeholder={props.route.params.address.locality}
+                  disabled={true}
+                  value={locationValue.locality}
+                />
+              </View>
+              <View style= {tw`flex flex-1`}>
+                <Text style={styles.positionLabel}> Code postal</Text>
+                <Input
+                  placeholder={props.route.params.address.postalCode}
+                  disabled={true}
+                  value={locationValue.postalCode}
+                />
+              </View>
+            </View>
+            <Text style={styles.positionLabel}> Adresse</Text>
             <Input
-              placeholder=""
-              value={locationValue}
-              onChangeText={(value) => setLocationValue(value)}
+              placeholder={
+                props.route.params.address.subThoroughfare
+                  ? props.route.params.address.subThoroughfare +
+                    " " +
+                    props.route.params.address.thoroughfare
+                  : props.route.params.address.thoroughfare
+              }
+              value={locationValue.address}
               disabled={true}
             />
           </View>
@@ -89,7 +123,6 @@ export const AddPoint = (props: any) => {
             <Text style={styles.errorText}>{error}</Text>
           </View>
         )}
-        {/* {console.log(props)} */}
         <View>
           <Button status="success" onPress={addCollect}>
             Créer

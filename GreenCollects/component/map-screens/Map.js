@@ -16,7 +16,8 @@ import MapView, {
 
 import tw from "twrnc";
 
-import addIcon from "../../assets/add-collect-plus.png"
+import addIcon from "../../assets/add-collect-plus.png";
+import FilteringKm from "../filtering/FilteringKm";
 
 const screen = Dimensions.get("window");
 
@@ -62,30 +63,67 @@ class Map extends React.Component {
       coordinate: new AnimatedRegion({
         latitude: LATITUDE,
         longitude: LONGITUDE,
-      })
+      }),
+      radius: 5000,
     };
   }
 
-  componentWillReceiveProps = (nextProps) => {
-    this.props.navigation.push("AddPoint", {region : nextProps.route.params.region})
+  updateRadius = (radius) => {
+    this.setState({
+      radius: radius,
+    });
+    this.animate(radius);
+  };
+
+  animate(radius) {
+    let r = {
+      latitude: LATITUDE,
+      longitude: LONGITUDE,
+      latitudeDelta: (radius / 1000 / 111) * 4,
+      longitudeDelta: (radius / 1000 / 111) * ASPECT_RATIO,
+    };
+    this.map.animateToRegion(r, 2000);
   }
-  
+
+  componentDidUpdate = (prevProps) => {
+    const getAddress = async () => {
+      const changeProps = this.props.route?.params?.region;
+      console.log("region",this.props)
+      if (changeProps !== undefined && changeProps !== prevProps?.route?.params?.region) {
+        const newAddress = await this.map.addressForCoordinate(changeProps);
+        this.props.navigation.push("AddPoint", {
+          region: changeProps,
+          address: newAddress,
+        });
+      }
+    };
+    getAddress().catch( e => console.log(e))
+  };
 
   render() {
     return (
-
       <SafeAreaView style={styles.safecontainer}>
         <View style={styles.mapcontainer}>
           <MapView
             provider={this.props.provider}
+            ref={(ref) => {
+              this.map = ref;
+            }}
             style={styles.map}
             initialRegion={{
               latitude: LATITUDE,
               longitude: LONGITUDE,
-              latitudeDelta: LATITUDE_DELTA,
-              longitudeDelta: LONGITUDE_DELTA,
+              latitudeDelta: (this.state.radius / 1000 / 111) * 4,
+              longitudeDelta: (this.state.radius / 1000 / 111) * ASPECT_RATIO,
             }}
           >
+            <MapView.Circle
+              center={{ latitude: LATITUDE, longitude: LONGITUDE }}
+              radius={this.state.radius}
+              strokeWidth={1}
+              strokeColor={"#1a66ff"}
+              fillColor={"rgba(230,238,255,0.5)"}
+            />
             {markers.map((marker, i) => {
               return (
                 <Marker
@@ -97,10 +135,17 @@ class Map extends React.Component {
               );
             })}
           </MapView>
+
+          <FilteringKm updateRadius={this.updateRadius} />
+
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={[styles.bubble, styles.button]}
-              onPress={() => this.props.navigation.push("AddCollect", {ParentScreen : "Map"})}
+              onPress={() =>
+                this.props.navigation.push("AddCollect", {
+                  ParentScreen: "Map",
+                })
+              }
             >
               <Image style={styles.icon} source={addIcon} />
             </TouchableOpacity>
@@ -138,8 +183,8 @@ const styles = StyleSheet.create({
   },
   container: tw`flex flex-1 bg-white items-center justify-center`,
   safecontainer: tw`flex flex-1`,
-  icon : tw`w-15 h-15`,
-  buttonContainer : tw`bottom-0 right-0 absolute `,
+  icon: tw`w-15 h-15`,
+  buttonContainer: tw`bottom-0 right-0 absolute `,
 });
 
 export default Map;

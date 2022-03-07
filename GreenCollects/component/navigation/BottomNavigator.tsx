@@ -28,7 +28,7 @@ const BottomNavigator = () => {
                     title: "Carte",
                 }}
             />
-
+            
             <BottomTab.Screen
                 name="Profil"
                 component={UserProfil}
