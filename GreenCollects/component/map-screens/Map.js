@@ -88,7 +88,6 @@ class Map extends React.Component {
   componentDidUpdate = (prevProps) => {
     const getAddress = async () => {
       const changeProps = this.props.route?.params?.region;
-      console.log("region",this.props)
       if (changeProps !== undefined && changeProps !== prevProps?.route?.params?.region) {
         const newAddress = await this.map.addressForCoordinate(changeProps);
         this.props.navigation.push("AddPoint", {
@@ -130,7 +129,7 @@ class Map extends React.Component {
                   key={marker.id}
                   coordinate={marker.coordinate}
                   title="C'est un Titre ? "
-                  description={"Décription du point" + marker.id}
+                  description={"Déscription du point" + marker.id}
                 />
               );
             })}
@@ -169,18 +168,8 @@ const styles = StyleSheet.create({
   map: {
     ...StyleSheet.absoluteFillObject,
   },
-  bubble: {
-    flex: 1,
-    paddingHorizontal: 18,
-    paddingVertical: 12,
-    borderRadius: 20,
-  },
-  button: {
-    width: 80,
-    paddingHorizontal: 12,
-    alignItems: "center",
-    marginHorizontal: 10,
-  },
+  bubble: tw`flex-1 bg-transparent py-3 rounded-full `,
+  button : tw`w-10 pr-12 mx-8`,
   container: tw`flex flex-1 bg-white items-center justify-center`,
   safecontainer: tw`flex flex-1`,
   icon: tw`w-15 h-15`,

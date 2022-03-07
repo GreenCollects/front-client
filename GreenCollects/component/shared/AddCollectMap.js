@@ -37,7 +37,7 @@ class Map extends React.Component {
         longitude: LONGITUDE,
       }),
     };
-    // console.log("SETSTATE",this.state.coordinate)
+
   }
 
   onRegionChange = (region) => {
@@ -95,37 +95,13 @@ const styles = StyleSheet.create({
   map: {
     ...StyleSheet.absoluteFillObject,
   },
-  bubble: {
-    flex: 1,
-    backgroundColor: "rgba(255,255,255,0.7)",
-    paddingHorizontal: 18,
-    paddingVertical: 12,
-    borderRadius: 20,
-  },
-  button: {
-    width: 80,
-    paddingHorizontal: 12,
-    alignItems: "center",
-    marginHorizontal: 10,
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    marginVertical: 20,
-    backgroundColor: "transparent",
-  },
+  bubble: tw`flex-1 bg-white py-3 rounded-full `,
+  button:tw`w-80 px-14 mx-10` ,
+  buttonContainer: tw`flex-row my-20 bg-transparent`,
   container: tw`flex flex-1 bg-white items-center justify-center`,
   safecontainer: tw`flex flex-1`,
-  markerFixed: {
-    left: "50%",
-    marginLeft: -24,
-    marginTop: -48,
-    position: "absolute",
-    top: "50%",
-  },
-  marker: {
-    height: 36,
-    width: 36,
-  },
+  markerFixed:tw`top-75% -ml-24 -mt-48 absolute`,
+  marker:tw`w-10 h-10`
 });
 
 export default Map;

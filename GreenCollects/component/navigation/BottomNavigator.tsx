@@ -11,7 +11,7 @@ const BottomTab = createBottomTabNavigator();
 const BottomNavigator = () => {
     return (
         <BottomTab.Navigator
-            tabBar={(props) => <Navbar {...props} />}
+            tabBar={(props) => <Navbar {...props} /> }
             screenOptions={{ headerShown: false }}
         >
             <BottomTab.Screen
@@ -28,7 +28,6 @@ const BottomNavigator = () => {
                     title: "Carte",
                 }}
             />
-            
             <BottomTab.Screen
                 name="Profil"
                 component={UserProfil}
