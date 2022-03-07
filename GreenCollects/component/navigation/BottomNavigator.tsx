@@ -4,6 +4,8 @@ import CollectCreation from "../CollectCreation";
 import Map from "../Map";
 import Navbar from "../shared/Navbar";
 import UserProfil from "../Profil";
+import UserNavigator from "./UserNavigator";
+
 
 const BottomTab = createBottomTabNavigator();
 
@@ -31,7 +33,7 @@ const BottomNavigator = () => {
 
             <BottomTab.Screen
                 name="Profil"
-                component={UserProfil}
+                component={UserNavigator}
                 options={{
                     title: "Profil",
                 }}

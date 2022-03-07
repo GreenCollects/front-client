@@ -7,8 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { TouchableWithoutFeedback } from "@ui-kitten/components/devsupport";
 import { EyeIcon, EyeOffIcon } from "../icons/icons";
 
-const Register = () => {
-    const navigation = useNavigation();
+const Register = (props:any) => {
 
     var url = environment.SERVER_API_URL + '/api/account/';
 
@@ -63,7 +62,7 @@ const Register = () => {
             })
         }).then(function(response) {
             if (response.ok){
-                navigation.navigate("login" as never);
+                props.navigation.navigate("Connexion");
             }
         }).catch(err => {
             Alert.alert(

@@ -18,7 +18,7 @@ import { LOGOUT, PROFIL } from "./store/types";
 
 const Stack = createNativeStackNavigator();
 
-const UserProfil = () => {
+const UserProfil = (props:any) => {
     const dispatch = useDispatch();
 
     const token = useSelector((state: RootState) => state.authentication.token);
@@ -29,6 +29,9 @@ const UserProfil = () => {
     useEffect(() => {
         if (token){
             getCurrentUser();
+        }
+        else {
+            props.navigation.navigate("Connexion")
         }
     }, [user]);
 
@@ -90,29 +93,21 @@ const UserProfil = () => {
     };
 
     return (
-        (
-            !token ? (               
-                <Stack.Navigator initialRouteName={"login"}>
-                        <Stack.Screen name="login" component={Login} />
-                        <Stack.Screen name="register" component={Register} />
-                </Stack.Navigator>
-            ) : (
-                <SafeAreaView>
-                    <View>
-                        <TopNavigation title="Mon profil" />
-                    </View>
-                    <Card>
-                        <Text>Username : {user.username}</Text>
-                        <Text>Email : {user.email}</Text>
-                        <Text>First name : {user.first_name}</Text>
-                        <Text>Last name : {user.last_name}</Text>
-                    </Card>
-                    <Button onPress={() => handleLogout()}>
-                        Logout
-                    </Button>
-                </SafeAreaView>
-            )
-        )     
+        
+        <SafeAreaView>
+            <View>
+                <TopNavigation title="Mon profil" />
+            </View>
+            <Card>
+                <Text>Username : {user.username}</Text>
+                <Text>Email : {user.email}</Text>
+                <Text>First name : {user.first_name}</Text>
+                <Text>Last name : {user.last_name}</Text>
+            </Card>
+            <Button onPress={() => handleLogout()}>
+                Logout
+            </Button>
+        </SafeAreaView>    
     );
 };
 

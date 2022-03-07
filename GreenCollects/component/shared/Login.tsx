@@ -11,7 +11,7 @@ import { useNavigation } from '@react-navigation/native';
 import { TouchableWithoutFeedback } from "@ui-kitten/components/devsupport";
 import { EyeIcon, EyeOffIcon } from "../icons/icons";
 
-const Login = () => {
+const Login = (props:any) => {
     const dispatch = useDispatch();
     const navigation = useNavigation();
 
@@ -45,6 +45,7 @@ const Login = () => {
                 response.json().then(data => {
                     dispatch({type: LOGIN, value: {username: username, token: data["token"]}});
                 });
+                props.navigation.navigate("Mon Profil")
             }
         }).catch(err => {
             Alert.alert(
@@ -133,13 +134,13 @@ const Login = () => {
             <Text style={styles.error}>{passwordErr}</Text>
             
             <Button onPress={() => handleLogin()} disabled={!formValidated}>
-                Login
+                Se connecter
             </Button>
             
             <Button
-                onPress={() => {navigation.navigate("register" as never)}}
+                onPress={() => {navigation.navigate("Inscription" as never)}}
             >
-                Create account
+                Créer un compte
             </Button>
         </View>
     );
