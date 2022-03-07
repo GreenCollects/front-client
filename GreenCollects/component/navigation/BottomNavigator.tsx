@@ -1,9 +1,9 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React from "react";
 import CollectCreation from "../CollectCreation";
-import Map from "../Map";
 import Navbar from "../shared/Navbar";
 import UserProfil from "../Profil";
+import MapNavigator from "./MapNavigator";
 import UserNavigator from "./UserNavigator";
 
 
@@ -13,7 +13,7 @@ const BottomTab = createBottomTabNavigator();
 const BottomNavigator = () => {
     return (
         <BottomTab.Navigator
-            tabBar={(props) => <Navbar {...props} />}
+            tabBar={(props) => <Navbar {...props} /> }
             screenOptions={{ headerShown: false }}
         >
             <BottomTab.Screen
@@ -25,12 +25,11 @@ const BottomNavigator = () => {
             />
             <BottomTab.Screen
                 name="Carte"
-                component={Map}
+                component={MapNavigator}
                 options={{
-                    title: "Accueil",
+                    title: "Carte",
                 }}
             />
-
             <BottomTab.Screen
                 name="Profil"
                 component={UserNavigator}
