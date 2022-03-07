@@ -4,11 +4,12 @@ import { Alert, StyleSheet, Text, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import tailwind from "twrnc";
 import environment from "../../environment";
-import login from "../store/reducers/authentication"
 import { RootState } from "../store/Store";
-import { LOGIN, LOGOUT } from "../store/types";
+import { LOGIN } from "../store/types";
 
 import { useNavigation } from '@react-navigation/native';
+import { TouchableWithoutFeedback } from "@ui-kitten/components/devsupport";
+import { EyeIcon, EyeOffIcon } from "../icons/icons";
 
 const Login = () => {
     const dispatch = useDispatch();
@@ -18,6 +19,7 @@ const Login = () => {
     const [usernameErr, setUsernameErr] = useState('');
     const [password, setPassword] = useState('');
     const [passwordErr, setPasswordErr] = useState('');
+    const [passwordSecureText, setPasswordSecureText] = useState(true);
     const [formValidated, setFormValidated] = useState(false);
 
     const USR_NAME_MIN_LENGTH = 1;
@@ -70,22 +72,46 @@ const Login = () => {
 
     const handleUsernameFieldChange = (newValue: string) => {
         if (newValue.length < USR_NAME_MIN_LENGTH){
-            setUsernameErr('Username to short (min '+ USR_NAME_MIN_LENGTH +' character')
+            setUsernameErr(`Username to short (min ${USR_NAME_MIN_LENGTH} character)`)
         }else{
             setUsernameErr('');
         }
 
         setUsername(newValue);
-    }
+    };
 
     const handlePasswordFieldChange = (newValue: string) => {
         if (newValue.length < PWD_MIN_LENGTH){
-            setPasswordErr('Username to short (min '+ PWD_MIN_LENGTH +' character)')
+            setPasswordErr(`Password to short (min ${PWD_MIN_LENGTH} character)`)
         }else{
             setPasswordErr('');
         }
 
         setPassword(newValue);
+    };
+
+    const toggleSecureEntry = () => {
+        setPasswordSecureText(!passwordSecureText);
+    };
+
+    const renderIcon = (props: any) => (
+            <TouchableWithoutFeedback onPress={toggleSecureEntry}>
+            {
+                passwordSecureText ? (
+                    <EyeOffIcon {...props} />
+                ) : (
+                    <EyeIcon {...props} />
+                )
+            }
+            </TouchableWithoutFeedback>
+    );
+
+    const renderStatus = (error: string) => {
+        if (error) {
+            return 'danger'
+        } else {
+            return 'basic'
+        }
     }
 
     return (
@@ -93,20 +119,18 @@ const Login = () => {
             <Input
                 placeholder='Username'
                 onChangeText={nextValue => handleUsernameFieldChange(nextValue)}
+                status={renderStatus(usernameErr)}
             />
-            <View>
-                {/* <Icon name='alert-circle-outline'/> */}
-                <Text style={styles.error}>{usernameErr}</Text>
-            </View>
+            <Text style={styles.error}>{usernameErr}</Text>
 
             <Input
                 placeholder='Password'
                 onChangeText={nextValue => handlePasswordFieldChange(nextValue)}
+                status={renderStatus(passwordErr)}
+                secureTextEntry={passwordSecureText}
+                accessoryRight={renderIcon}
             />
-            <View>
-                {/* <Icon name='alert-triangle-outline'/> */}
-                <Text style={styles.error}>{passwordErr}</Text>
-            </View>
+            <Text style={styles.error}>{passwordErr}</Text>
             
             <Button onPress={() => handleLogin()} disabled={!formValidated}>
                 Login
