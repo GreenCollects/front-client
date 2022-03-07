@@ -8,12 +8,11 @@ import login from "../store/reducers/authentication"
 import { RootState } from "../store/Store";
 import { LOGIN, LOGOUT } from "../store/types";
 
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Register from "./Register";
+import { useNavigation } from '@react-navigation/native';
 
 const Login = () => {
     const dispatch = useDispatch();
+    const navigation = useNavigation();
 
     const [username, setUsername] = useState('');
     const [usernameErr, setUsernameErr] = useState('');
@@ -89,70 +88,35 @@ const Login = () => {
         setPassword(newValue);
     }
 
-    const handleLogout = () => {
-        fetch(`${url}logout/`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                "username": username
-            })
-        }).then(function(response) {
-            dispatch({type: LOGOUT});
-        }).catch(err => {
-            Alert.alert(
-                "Error : logout",
-                err.message,
-                [
-                    {text: "Cancel", style: "cancel"},
-                    { text: "OK"}
-                ]
-            );
-        });
-    };
-
     return (
-        <View>
-            {
-                token ? (
-                    <Button onPress={() => handleLogout()}>
-                        Logout
-                    </Button>
-                ) : (
-                    <View>  
-                        <Input
-                            placeholder='Username'
-                            onChangeText={nextValue => handleUsernameFieldChange(nextValue)}
-                        />
-                        <View>
-                            {/* <Icon name='alert-circle-outline'/> */}
-                            <Text style={styles.error}>{usernameErr}</Text>
-                        </View>
+        <View>  
+            <Input
+                placeholder='Username'
+                onChangeText={nextValue => handleUsernameFieldChange(nextValue)}
+            />
+            <View>
+                {/* <Icon name='alert-circle-outline'/> */}
+                <Text style={styles.error}>{usernameErr}</Text>
+            </View>
 
-                        <Input
-                            placeholder='Password'
-                            onChangeText={nextValue => handlePasswordFieldChange(nextValue)}
-                        />
-                        <View>
-                            {/* <Icon name='alert-triangle-outline'/> */}
-                            <Text style={styles.error}>{passwordErr}</Text>
-                        </View>
-                        
-                        <Button onPress={() => handleLogin()} disabled={!formValidated}>
-                            Login
-                        </Button>
-                        
-                        <Button
-                            disabled={true}
-                            onPress={() => {}}
-                        >
-                            Create account (Not Available)
-                        </Button>
-                    </View>
-                )
-            }
+            <Input
+                placeholder='Password'
+                onChangeText={nextValue => handlePasswordFieldChange(nextValue)}
+            />
+            <View>
+                {/* <Icon name='alert-triangle-outline'/> */}
+                <Text style={styles.error}>{passwordErr}</Text>
+            </View>
+            
+            <Button onPress={() => handleLogin()} disabled={!formValidated}>
+                Login
+            </Button>
+            
+            <Button
+                onPress={() => {navigation.navigate("register" as never)}}
+            >
+                Create account
+            </Button>
         </View>
     );
 };

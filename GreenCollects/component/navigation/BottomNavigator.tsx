@@ -3,7 +3,7 @@ import React from "react";
 import CollectCreation from "../CollectCreation";
 import Map from "../Map";
 import Navbar from "../shared/Navbar";
-import UserProfil from "../UserProfil";
+import UserProfil from "../Profil";
 
 const BottomTab = createBottomTabNavigator();
 
