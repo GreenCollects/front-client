@@ -32,17 +32,17 @@ class Map extends React.Component {
     super(props);
 
     this.state = {
-      coordinate: new AnimatedRegion({
+      coordinate: {
         latitude: LATITUDE,
         longitude: LONGITUDE,
-      }),
+      },
     };
 
   }
 
   onRegionChange = (region) => {
     this.setState({
-      coordinate : region
+      coordinate: region
     })
 
   };
@@ -62,20 +62,20 @@ class Map extends React.Component {
               longitude: LONGITUDE,
               latitudeDelta: LATITUDE_DELTA,
               longitudeDelta: LONGITUDE_DELTA,
-              }}
-              onRegionChange={this.onRegionChange}
+            }}
+            onRegionChange={this.onRegionChange}
           ></MapView>
           <View style={styles.markerFixed}>
             <Image style={styles.marker} source={marker} />
           </View>
           <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[styles.bubble, styles.button]}
-            onPress={() => this.props.navigation.navigate(this.props.route.params.ParentScreen, { region : this.state.coordinate})}
-          >
-            <Text>Choisir cette emplacement </Text>
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity
+              style={[styles.bubble, styles.button]}
+              onPress={() => this.props.navigation.navigate(this.props.route.params.ParentScreen, { region: this.state.coordinate })}
+            >
+              <Text>Choisir cet emplacement </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </SafeAreaView>
     );
@@ -96,12 +96,12 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
   bubble: tw`flex-1 bg-white py-3 rounded-full `,
-  button:tw`w-80 px-14 mx-10` ,
+  button: tw`w-80 px-14 mx-10`,
   buttonContainer: tw`flex-row my-20 bg-transparent`,
   container: tw`flex flex-1 bg-white items-center justify-center`,
   safecontainer: tw`flex flex-1`,
-  markerFixed:tw`top-75% -ml-24 -mt-48 absolute`,
-  marker:tw`w-10 h-10`
+  markerFixed: tw`top-75% -ml-24 -mt-48 absolute`,
+  marker: tw`w-10 h-10`
 });
 
 export default Map;

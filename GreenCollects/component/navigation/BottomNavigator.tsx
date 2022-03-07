@@ -2,8 +2,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React from "react";
 import CollectCreation from "../CollectCreation";
 import Navbar from "../shared/Navbar";
-import UserProfil from "../UserProfil";
 import MapNavigator from "./MapNavigator";
+import UserNavigator from "./UserNavigator";
+
 
 const BottomTab = createBottomTabNavigator();
 
@@ -30,7 +31,7 @@ const BottomNavigator = () => {
             />
             <BottomTab.Screen
                 name="Profil"
-                component={UserProfil}
+                component={UserNavigator}
                 options={{
                     title: "Profil",
                 }}
