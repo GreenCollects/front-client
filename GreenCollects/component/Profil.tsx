@@ -27,7 +27,9 @@ const UserProfil = () => {
     var url = environment.SERVER_API_URL + '/api/account/';
 
     useEffect(() => {
-        getCurrentUser();
+        if (token){
+            getCurrentUser();
+        }
     }, [user]);
 
     const getCurrentUser = () => {
