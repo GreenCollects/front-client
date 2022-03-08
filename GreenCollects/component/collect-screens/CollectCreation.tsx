@@ -20,6 +20,9 @@ import TopNavigation from "../shared/TopNavigation";
 import { CalendarIcon } from "../icons/icons";
 import { getAllWasteType } from "../api/waste";
 import { createCollect } from "../api/collect";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/Store";
+import Toast from "react-native-root-toast";
 
 const i18n: I18nConfig = {
     dayNames: {
@@ -71,7 +74,6 @@ const localeDateService: DateService<any> = new NativeDateService("fr", {
     startDayOfWeek: 0,
 });
 
-// TODO: replace this component to render the real creation of a collect interface
 const CollectCreation = (props: any) => {
     const [labels, setLabels] = useState([]);
 
@@ -85,7 +87,8 @@ const CollectCreation = (props: any) => {
     });
     const [wastes, setWastes] = useState([]);
 
-    const token = "d8d040e32c957ea4959a53c9001488803a14544d"; // TODO: useSelector((state: RootState) => state.authentication.token);
+    const token = useSelector((state: RootState) => state.authentication.token);
+    const user = useSelector((state: RootState) => state.authentication.user);
 
     const [error, setError] = useState("");
 
@@ -94,25 +97,28 @@ const CollectCreation = (props: any) => {
     });
 
     useEffect(() => {
-        const getData = async () => {
-            const headers = new Headers();
-            headers.append("Accept", "application/json");
-            headers.append("Content-Type", "application/json");
-            headers.append("Authorization", "Token " + token);
-            const data = await getAllWasteType(headers);
-            const fetched_labels = data?.map((value: any) => {
-                return value.label;
-            });
+        if (token !== "") {
+            const getData = async () => {
+                const headers = new Headers();
+                headers.append("Accept", "application/json");
+                headers.append("Content-Type", "application/json");
+                headers.append("Authorization", "Token " + token);
 
-            setWastes(data);
-            setLabels(fetched_labels);
-        };
+                const data = await getAllWasteType(headers);
+                if (data !== undefined) {
+                    const fetched_labels = data?.map((value: any) => {
+                        return value.label;
+                    });
 
-        // if (token !== "") {
-        getData().catch((err) => console.log(err));
-        // } else {
-        // TODO: Gérer le token avec des stack de connexion
-        // }
+                    setWastes(data);
+                    setLabels(fetched_labels);
+                }
+            };
+
+            getData().catch((err) => console.log(err));
+        } else {
+            // TODO: Gérer le token avec des stack de connexion
+        }
     }, [getAllWasteType]);
 
     useEffect(() => {
@@ -134,6 +140,13 @@ const CollectCreation = (props: any) => {
         } else {
             setVolumeValue("");
         }
+    };
+
+    const clearForm = () => {
+        setSelectedLabels([]);
+        setVolumeValue("");
+        setDateValue("");
+        setLocationValue({ locality: "", postalCode: "", address: "" });
     };
 
     const createCollectOnPress = () => {
@@ -177,10 +190,28 @@ const CollectCreation = (props: any) => {
                     latitude: props.route.params.region.latitude,
                     longitude: props.route.params.region.longitude,
                     wastes: filteredWastesId,
-                    // TODO: add user
+                    user: user.id,
                 };
 
-                createCollect(headers, JSON.stringify(body));
+                const data: any = await createCollect(
+                    headers,
+                    JSON.stringify(body)
+                );
+
+                if (data !== undefined) {
+                    Toast.show("Point de collecte créé avec succès !", {
+                        duration: Toast.durations.SHORT,
+                        position: Toast.positions.BOTTOM,
+                        shadow: true,
+                        animation: true,
+                        hideOnPress: true,
+                        delay: 0,
+                        backgroundColor: "#54e096",
+                        textColor: "#fff",
+                    });
+
+                    clearForm();
+                }
             };
             getData().catch((err) => console.log(err));
         } else if (

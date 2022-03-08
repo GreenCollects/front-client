@@ -1,16 +1,47 @@
 import React from "react";
+import Toast from "react-native-root-toast";
 
-const API_BASE_URL = "http://192.168.1.15:8000/api/";
-const API_WASTE_URL = "waste/";
+import environment from "../../environment";
+import HTTP_MAP_ERROR_CODE from "./errors";
+
+const API_WASTE_URL = "/api/waste/";
 
 export const getAllWasteType = async (headers: Headers) => {
-    const response = await fetch(API_BASE_URL + API_WASTE_URL, {
-        method: "GET",
-        headers: headers,
-    })
-        .then((data) => data.json())
-        .then((data) => data)
-        .catch((err) => err);
+    const brut_response = await fetch(
+        environment.SERVER_API_URL + API_WASTE_URL,
+        {
+            method: "GET",
+            headers: headers,
+        }
+    )
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                Toast.show(HTTP_MAP_ERROR_CODE[response.status], {
+                    duration: Toast.durations.SHORT,
+                    position: Toast.positions.BOTTOM,
+                    shadow: true,
+                    animation: true,
+                    hideOnPress: true,
+                    delay: 0,
+                    backgroundColor: "#f13e71",
+                    textColor: "#fff",
+                });
+            }
+        })
+        .catch((err) => {
+            Toast.show(HTTP_MAP_ERROR_CODE[503], {
+                duration: Toast.durations.SHORT,
+                position: Toast.positions.BOTTOM,
+                shadow: true,
+                animation: true,
+                hideOnPress: true,
+                delay: 0,
+                backgroundColor: "#f13e71",
+                textColor: "#fff",
+            });
+        });
 
-    return response;
+    return brut_response;
 };
