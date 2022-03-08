@@ -18,6 +18,7 @@ import tw from "twrnc";
 
 import addIcon from "../../assets/add-collect-plus.png";
 import FilteringKm from "../filtering/FilteringKm";
+import CardDetails from "./CardDetails";
 
 const screen = Dimensions.get("window");
 
@@ -65,6 +66,8 @@ class Map extends React.Component {
         longitude: LONGITUDE,
       }),
       radius: 5000,
+      visibleDetails: false,
+      selectedMarker: {},
     };
   }
 
@@ -102,6 +105,18 @@ class Map extends React.Component {
     getAddress().catch((e) => console.log(e));
   };
 
+  zoomAndDisplayDetails(props) {
+    // .coordinate,marker.id,marker.label,marker.wastes
+
+    this.setState({ selectedMarker: props.marker });
+    this.setState({ visibleDetails: true });
+  }
+
+  DeselectMarkerAndHGideDetails(props) {
+    this.setState({ selectedMarker: {} });
+    this.setState({ visibleDetails: false });
+  }
+
   render() {
     return (
       <SafeAreaView style={styles.safecontainer}>
@@ -119,6 +134,7 @@ class Map extends React.Component {
               latitudeDelta: (this.state.radius / 1000 / 111) * 4,
               longitudeDelta: (this.state.radius / 1000 / 111) * ASPECT_RATIO,
             }}
+            onPress={() => this.DeselectMarkerAndHGideDetails()}
           >
             <MapView.Circle
               center={{ latitude: LATITUDE, longitude: LONGITUDE }}
@@ -127,13 +143,13 @@ class Map extends React.Component {
               strokeColor={"#1a66ff"}
               fillColor={"rgba(230,238,255,0.5)"}
             />
-            {markers.map((marker, i) => {
+            {markers.map((marker) => {
               return (
                 <Marker
                   key={marker.id}
                   coordinate={marker.coordinate}
-                  title="C'est un Titre ? "
-                  description={"Déscription du point" + marker.id}
+                  onSelect={() => this.zoomAndDisplayDetails(marker)}
+                  onPress={() => this.zoomAndDisplayDetails(marker)}
                 />
               );
             })}
@@ -151,6 +167,10 @@ class Map extends React.Component {
               <Image style={styles.icon} source={addIcon} />
             </TouchableOpacity>
           </View>
+
+          {this.state.visibleDetails && (
+            <CardDetails parent={this} marker={this.state.selectedMarker} />
+          )}
         </View>
       </SafeAreaView>
     );
