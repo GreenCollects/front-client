@@ -88,7 +88,10 @@ class Map extends React.Component {
   componentDidUpdate = (prevProps) => {
     const getAddress = async () => {
       const changeProps = this.props.route?.params?.region;
-      if (changeProps !== undefined && changeProps !== prevProps?.route?.params?.region) {
+      if (
+        changeProps !== undefined &&
+        changeProps !== prevProps?.route?.params?.region
+      ) {
         const newAddress = await this.map.addressForCoordinate(changeProps);
         this.props.navigation.push("AddPoint", {
           region: changeProps,
@@ -96,12 +99,13 @@ class Map extends React.Component {
         });
       }
     };
-    getAddress().catch( e => console.log(e))
+    getAddress().catch((e) => console.log(e));
   };
 
   render() {
     return (
       <SafeAreaView style={styles.safecontainer}>
+        <FilteringKm updateRadius={this.updateRadius} />
         <View style={styles.mapcontainer}>
           <MapView
             provider={this.props.provider}
@@ -135,8 +139,6 @@ class Map extends React.Component {
             })}
           </MapView>
 
-          <FilteringKm updateRadius={this.updateRadius} />
-
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={[styles.bubble, styles.button]}
@@ -169,7 +171,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
   bubble: tw`flex-1 bg-transparent py-3 rounded-full `,
-  button : tw`w-10 pr-12 mx-8`,
+  button: tw`w-10 pr-12 mx-8`,
   container: tw`flex flex-1 bg-white items-center justify-center`,
   safecontainer: tw`flex flex-1`,
   icon: tw`w-15 h-15`,
