@@ -15,85 +15,73 @@ import { RootState } from "./store/Store";
 import { Button, Card } from "@ui-kitten/components";
 import environment from "../environment";
 import { LOGOUT, PROFIL } from "./store/types";
+import { getCurrentUser, logout } from "./api/account";
+import Toast from "react-native-root-toast";
 
 const Stack = createNativeStackNavigator();
 
-const UserProfil = (props:any) => {
+const UserProfil = (props: any) => {
     const dispatch = useDispatch();
 
     const token = useSelector((state: RootState) => state.authentication.token);
     const user = useSelector((state: RootState) => state.authentication.user);
 
-    var url = environment.SERVER_API_URL + '/api/account/';
-
     useEffect(() => {
-        if (token){
-            getCurrentUser();
-        }
-        else {
-            props.navigation.navigate("Connexion")
-        }
-    }, [user]);
+        if (token) {
+            const getUser = async () => {
+                const headers = new Headers();
+                headers.append("Accept", "application/json");
+                headers.append("Content-Type", "application/json");
+                headers.append("Authorization", `Token ${token}`);
 
-    const getCurrentUser = () => {
-        fetch(`${url}current-user/`, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': `Token ${token}`
-            }
-        }).then(function(response) {
-            if (response.ok) {
-                response.json().then(data => {
+                const data: any = await getCurrentUser(headers);
+
+                if (data !== undefined) {
                     dispatch({
-                        type: PROFIL, 
-                        value:{
-                            user: data
-                        }
+                        type: PROFIL,
+                        value: {
+                            user: data,
+                        },
                     });
-                });
-            }
-        }).catch(err => {
-            Alert.alert(
-                "Error : retrive current user",
-                err.message,
-                [
-                    {text: "Cancel", style: "cancel"},
-                    { text: "OK"}
-                ]
-            );
-        });
-    };
+                }
+            };
+            getUser().catch((err) => console.log(err));
+        } else {
+            props.navigation.navigate("Connexion");
+        }
+    }, [token]);
 
     const handleLogout = () => {
-        fetch(`${url}logout/`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                "username": user.username
-            })
-        }).then(function(response) {
-            if (response.ok) {
-                dispatch({type: LOGOUT});
+        const doLogout = async () => {
+            const headers = new Headers();
+            headers.append("Accept", "application/json");
+            headers.append("Content-Type", "application/json");
+
+            const body = JSON.stringify({
+                username: user.username,
+            });
+
+            const data: any = await logout(headers, body);
+
+            if (data !== undefined) {
+                Toast.show("Déconnexion réussie", {
+                    duration: Toast.durations.SHORT,
+                    position: Toast.positions.BOTTOM,
+                    shadow: true,
+                    animation: true,
+                    hideOnPress: true,
+                    delay: 0,
+                    backgroundColor: "#54e096",
+                    textColor: "#fff",
+                });
+
+                dispatch({ type: LOGOUT });
             }
-        }).catch(err => {
-            Alert.alert(
-                "Error : logout",
-                err.message,
-                [
-                    {text: "Cancel", style: "cancel"},
-                    { text: "OK"}
-                ]
-            );
-        });
+        };
+        doLogout().catch((err) => console.log(err));
     };
 
     return (
-        
         <SafeAreaView>
             <View>
                 <TopNavigation title="Mon profil" />
@@ -104,10 +92,8 @@ const UserProfil = (props:any) => {
                 <Text>First name : {user.first_name}</Text>
                 <Text>Last name : {user.last_name}</Text>
             </Card>
-            <Button onPress={() => handleLogout()}>
-                Logout
-            </Button>
-        </SafeAreaView>    
+            <Button onPress={() => handleLogout()}>Logout</Button>
+        </SafeAreaView>
     );
 };
 

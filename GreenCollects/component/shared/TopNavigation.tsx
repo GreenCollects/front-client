@@ -5,9 +5,11 @@ import {
     OverflowMenu,
     TopNavigationAction,
     TopNavigation as TopNavigationUI,
+    Divider,
 } from "@ui-kitten/components";
 
 import { InfoIcon, LogoutIcon, MenuIcon } from "../icons/icons";
+import { View } from "react-native";
 
 // Top bar to render information like view title.
 // This top bar contain actions and could be enhanced.
@@ -34,12 +36,15 @@ const TopNavigation = ({ title, subtitle }: any) => {
     );
 
     return (
-        <TopNavigationUI
-            alignment="center"
-            title={title}
-            subtitle={subtitle}
-            accessoryRight={renderRightActions}
-        />
+        <View>
+            <TopNavigationUI
+                alignment="center"
+                title={title}
+                subtitle={subtitle}
+                accessoryRight={renderRightActions}
+            />
+            <Divider />
+        </View>
     );
 };
 
