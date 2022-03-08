@@ -1,6 +1,6 @@
 import { Input, Button, Text } from "@ui-kitten/components";
 import { useEffect, useState } from "react";
-import { Alert, StyleSheet } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import environment from "../../environment";
 import tailwind from "twrnc";
 import { useNavigation } from '@react-navigation/native';
@@ -164,66 +164,115 @@ const Register = (props:any) => {
     }
 
     return (
-        <>
-            <Input
-                placeholder='Username'
-                onChangeText={nextValue => handleUsernameFieldChange(nextValue)}
-                status={renderStatus(usernameErr)}
-            />
-            <Text style={styles.error}>{usernameErr}</Text>
+        <View style={styles.viewContainer}> 
+            <View style={styles.container}>
+                <Text style={styles.title}>
+                    S'inscrire
+                </Text>
 
-            <Input
-                placeholder='Email'
-                onChangeText={nextValue => handleEmailFieldChange(nextValue)}
-                status={renderStatus(emailErr)}
-            />
-            <Text style={styles.error}>{emailErr}</Text>
+                <View>
+                    <View style={styles.usernameForm}>
+                        <Text style={styles.usernameLabel}>Nom d'utilisateur</Text>      
+                        <Input
+                            placeholder='Username'
+                            onChangeText={nextValue => handleUsernameFieldChange(nextValue)}
+                            status={renderStatus(usernameErr)}
+                        />
+                        <Text style={styles.error}>{usernameErr}</Text>
+                    </View>
 
-            <Input
-                placeholder='First Name'
-                onChangeText={nextValue => handleFirstNameFieldChange(nextValue)}
-                status={renderStatus(first_nameErr)}
-            />
-            <Text style={styles.error}>{first_nameErr}</Text>
+                    <View style={styles.emailForm}>  
+                        <Text style={styles.emailLabel}>
+                            Email
+                        </Text>
+                        <Input
+                            placeholder='Email'
+                            onChangeText={nextValue => handleEmailFieldChange(nextValue)}
+                            status={renderStatus(emailErr)}
+                        />
+                        <Text style={styles.error}>{emailErr}</Text>
+                    </View>
 
-            <Input
-                placeholder='Last Name'
-                onChangeText={nextValue => handleLastNameFieldChange(nextValue)}
-                status={renderStatus(last_nameErr)}
-            />
-            <Text style={styles.error}>{last_nameErr}</Text>
+                    <View style={styles.firstNameForm}> 
+                        <Text style={styles.firstNameLabel}>Prénom</Text>
+                        <Input
+                            placeholder='First Name'
+                            onChangeText={nextValue => handleFirstNameFieldChange(nextValue)}
+                            status={renderStatus(first_nameErr)}
+                        />
+                        <Text style={styles.error}>{first_nameErr}</Text>
+                    </View>
 
-            <Input
-                value={password}
-                placeholder='Password'
-                onChangeText={nextValue => handlePasswordFieldChange(nextValue)}
-                status={renderStatus(passwordErr)}
-                secureTextEntry={passwordSecureText}
-                accessoryRight={renderIcon}
-            />
-            <Text style={styles.error}>{passwordErr}</Text>
+                    <View style={styles.lastNameForm}> 
+                        <Text style={styles.lastNameLabel}>Nom</Text>           
+                        <Input
+                            placeholder='Last Name'
+                            onChangeText={nextValue => handleLastNameFieldChange(nextValue)}
+                            status={renderStatus(last_nameErr)}
+                        />
+                        <Text style={styles.error}>{last_nameErr}</Text>
+                    </View>
 
-            <Input
-                value={reapeatPassword}
-                placeholder='Repeat password'
-                onChangeText={nextValue => handleRepeatPasswordFieldChange(nextValue)}
-                status={renderStatus(reapeatPasswordErr)}
-                secureTextEntry={true}
-            />
-            <Text style={styles.error}>{reapeatPasswordErr}</Text>
+                    <View style={styles.pwdForm}>
+                        <Text style={styles.pwdLabel}>
+                            Mot de passe
+                        </Text>
+                        <Input
+                            value={password}
+                            placeholder='Password'
+                            onChangeText={nextValue => handlePasswordFieldChange(nextValue)}
+                            status={renderStatus(passwordErr)}
+                            secureTextEntry={passwordSecureText}
+                            accessoryRight={renderIcon}
+                        />
+                        <Text style={styles.error}>{passwordErr}</Text>
+                    </View>
 
-            <Button 
-                disabled={!formValidated}
-                onPress={() => handleRegister()}
-            >
-                Register
-            </Button>
-        </>
+                    <View style={styles.confirmPwdForm}>
+                        <Text style={styles.confirmPwdLabel}>Confirmer le mot de passe</Text>
+                        <Input
+                            value={reapeatPassword}
+                            placeholder='Repeat password'
+                            onChangeText={nextValue => handleRepeatPasswordFieldChange(nextValue)}
+                            status={renderStatus(reapeatPasswordErr)}
+                            secureTextEntry={true}
+                        />
+                        <Text style={styles.error}>{reapeatPasswordErr}</Text>
+                    </View>
+
+                    <View>
+                        <Button 
+                            disabled={!formValidated}
+                            onPress={() => handleRegister()}
+                        >
+                            Register
+                        </Button>
+                    </View>
+
+                </View>
+            </View>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
+    viewContainer: tailwind`flex flex-1 bg-white`,
+    title: tailwind`text-center text-3xl mb-4 text-slate-500`,
+    container: tailwind`flex p-4`,
     error: tailwind`text-red-600`,
+    usernameForm : tailwind`mb-2`,
+    emailForm: tailwind`mb-2`,
+    firstNameForm : tailwind`mb-2`,
+    lastNameForm : tailwind`mb-2`,
+    pwdForm : tailwind`mb-2`,
+    confirmPwdForm : tailwind`mb-2`,
+    usernameLabel : tailwind`text-lg text-slate-500`,
+    emailLabel : tailwind`text-lg text-slate-500`,
+    firstNameLabel : tailwind`text-lg text-slate-500`,
+    lastNameLabel : tailwind`text-lg text-slate-500`,
+    pwdLabel : tailwind`text-lg text-slate-500`,
+    confirmPwdLabel : tailwind`text-lg text-slate-500`,
+
 });
 
 export default Register;
