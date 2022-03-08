@@ -94,6 +94,7 @@ class Map extends React.Component {
       <View>
           <TopNavigation title='Accueil'/>
       </View>
+      <FilteringKm updateRadius={this.updateRadius} />
       <View style={styles.mapcontainer}>
         <MapView
           provider={this.props.provider}
@@ -123,8 +124,6 @@ class Map extends React.Component {
             })}
 
         </MapView>
-        
-        <FilteringKm updateRadius={this.updateRadius} />
       </View>
       </SafeAreaView>
       

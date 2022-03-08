@@ -27,8 +27,8 @@ const FilteringKm = ({updateRadius}:any) => {
 };
 
 const styles = StyleSheet.create({
-    button: tw`m-2 rounded-full`,
-    safecontainer: tw`flex flex-1 items-center mt-15`,
+    button: tw`rounded-full`,
+    safecontainer: tw`flex flex-1 items-center z-50 ios:max-h-10 absolute inset-15`,
   });
 
 export default FilteringKm;
