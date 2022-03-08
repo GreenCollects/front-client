@@ -4,7 +4,7 @@ import CollectCreation from "../collect-screens/CollectCreation";
 import Navbar from "../shared/Navbar";
 import MapNavigator from "./MapNavigator";
 import UserNavigator from "./UserNavigator";
-
+import CollectNavigator from "./CollectNavigator";
 
 const BottomTab = createBottomTabNavigator();
 
@@ -12,12 +12,13 @@ const BottomTab = createBottomTabNavigator();
 const BottomNavigator = () => {
     return (
         <BottomTab.Navigator
-            tabBar={(props) => <Navbar {...props} /> }
+            tabBar={(props) => <Navbar {...props} />}
             screenOptions={{ headerShown: false }}
+            initialRouteName="Carte"
         >
             <BottomTab.Screen
                 name="CollectCreation"
-                component={CollectCreation}
+                component={CollectNavigator}
                 options={{
                     title: "Créer une collecte",
                 }}

@@ -19,6 +19,7 @@ import {
 import TopNavigation from "../shared/TopNavigation";
 import { CalendarIcon } from "../icons/icons";
 import { getAllWasteType } from "../api/waste";
+import { createCollect } from "../api/collect";
 
 const i18n: I18nConfig = {
     dayNames: {
@@ -77,7 +78,14 @@ const CollectCreation = (props: any) => {
     const [selectedLabels, setSelectedLabels] = useState([]);
     const [volumeValue, setVolumeValue] = useState("");
     const [dateValue, setDateValue] = useState("");
-    const [locationValue, setLocationValue] = useState("");
+    const [locationValue, setLocationValue] = useState({
+        locality: "",
+        postalCode: "",
+        address: "",
+    });
+    const [wastes, setWastes] = useState([]);
+
+    const token = "d8d040e32c957ea4959a53c9001488803a14544d"; // TODO: useSelector((state: RootState) => state.authentication.token);
 
     const [error, setError] = useState("");
 
@@ -87,16 +95,37 @@ const CollectCreation = (props: any) => {
 
     useEffect(() => {
         const getData = async () => {
-            const data = await getAllWasteType();
-            const fetched_labels = data.map((value: any) => {
+            const headers = new Headers();
+            headers.append("Accept", "application/json");
+            headers.append("Content-Type", "application/json");
+            headers.append("Authorization", "Token " + token);
+            const data = await getAllWasteType(headers);
+            const fetched_labels = data?.map((value: any) => {
                 return value.label;
             });
 
+            setWastes(data);
             setLabels(fetched_labels);
         };
 
+        // if (token !== "") {
         getData().catch((err) => console.log(err));
+        // } else {
+        // TODO: Gérer le token avec des stack de connexion
+        // }
     }, [getAllWasteType]);
+
+    useEffect(() => {
+        setLocationValue({
+            locality: props.route.params?.address?.locality,
+            postalCode: props.route.params?.address?.postalCode,
+            address: props.route.params?.address?.subThoroughfare
+                ? props.route.params?.address?.subThoroughfare +
+                  " " +
+                  props.route.params?.address?.thoroughfare
+                : props.route.params?.address?.thoroughfare,
+        });
+    }, [props.route.params]);
 
     const onChangeVolume = (value: string) => {
         const parsedValue = parseInt(value);
@@ -107,7 +136,7 @@ const CollectCreation = (props: any) => {
         }
     };
 
-    const createCollect = () => {
+    const createCollectOnPress = () => {
         const currentDate = new Date();
         const createDate = new Date(dateValue);
         const isDateValid =
@@ -117,19 +146,59 @@ const CollectCreation = (props: any) => {
         if (
             volumeValue !== "" &&
             isDateValid &&
-            locationValue !== "" &&
+            locationValue.postalCode !== "" &&
+            locationValue.locality !== "" &&
             selectedLabels.length !== 0
         ) {
             setError("");
+            const getData = async () => {
+                const headers = new Headers();
+                headers.append("Accept", "application/json");
+                headers.append("Content-Type", "application/json");
+                headers.append("Authorization", "Token " + token);
+
+                const wastesId = wastes.map((waste: any, index) => {
+                    let id;
+                    for (let i = 0; i < printedValue.length; i++) {
+                        if (printedValue[i] === waste.label) {
+                            id = waste.id;
+                        }
+                    }
+
+                    return id ? id : -1;
+                });
+
+                const filteredWastesId = wastesId.filter((elt) => elt !== -1);
+
+                const body = {
+                    quantityMax: volumeValue,
+                    collectDate: dateValue,
+                    label: "Point de collecte : " + printedValue.join(", "),
+                    latitude: props.route.params.region.latitude,
+                    longitude: props.route.params.region.longitude,
+                    wastes: filteredWastesId,
+                    // TODO: add user
+                };
+
+                createCollect(headers, JSON.stringify(body));
+            };
+            getData().catch((err) => console.log(err));
         } else if (
             volumeValue === "" ||
-            locationValue === "" ||
+            locationValue.postalCode === "" ||
+            locationValue.locality === "" ||
             selectedLabels.length === 0
         ) {
             setError("Aucun des champs ne doit être vide.");
         } else if (!isDateValid) {
             setError("La date est déjà passé.");
         }
+    };
+
+    const handlePressIn = () => {
+        props.navigation.navigate("Sélectionner un point", {
+            ParentScreen: "Organisation",
+        });
     };
 
     return (
@@ -184,11 +253,33 @@ const CollectCreation = (props: any) => {
                         <Text style={styles.positionLabel}>
                             Où la récolte se situera ?
                         </Text>
-                        <Input
-                            placeholder=""
-                            value={locationValue}
-                            onChangeText={(value) => setLocationValue(value)}
-                        />
+                        <View style={styles.formLocation}>
+                            <Text style={styles.positionLabel}> Adresse</Text>
+                            <Input
+                                value={locationValue.address}
+                                onPressIn={handlePressIn}
+                            />
+                            <View style={tw`flex flex-row`}>
+                                <View style={tw`flex flex-1`}>
+                                    <Text style={styles.positionLabel}>
+                                        Ville
+                                    </Text>
+                                    <Input
+                                        disabled={true}
+                                        value={locationValue.locality}
+                                    />
+                                </View>
+                                <View style={tw`flex flex-1`}>
+                                    <Text style={styles.positionLabel}>
+                                        Code postal
+                                    </Text>
+                                    <Input
+                                        disabled={true}
+                                        value={locationValue.postalCode}
+                                    />
+                                </View>
+                            </View>
+                        </View>
                     </View>
                 </View>
 
@@ -199,7 +290,7 @@ const CollectCreation = (props: any) => {
                 )}
 
                 <View>
-                    <Button status="success" onPress={createCollect}>
+                    <Button status="success" onPress={createCollectOnPress}>
                         Créer
                     </Button>
                 </View>

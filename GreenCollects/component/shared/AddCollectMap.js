@@ -12,6 +12,7 @@ import {
 import MapView, {
   ProviderPropType,
   AnimatedRegion,
+  Marker,
 } from "react-native-maps";
 
 import TopNavigation from "./TopNavigation";
@@ -47,6 +48,17 @@ class Map extends React.Component {
 
   };
 
+  handlePress = () => {
+    const getAddress = async () => {
+      const coordinate = this.state.coordinate
+      const newAddress = await this.map.addressForCoordinate(coordinate);
+      this.props.navigation.navigate(this.props.route.params.ParentScreen, { region: coordinate, address: newAddress })
+    }
+
+    getAddress().catch(err => console.log(err))
+
+  }
+
   render() {
     return (
       <SafeAreaView style={styles.safecontainer}>
@@ -56,6 +68,9 @@ class Map extends React.Component {
         <View style={styles.mapcontainer}>
           <MapView
             provider={this.props.provider}
+            ref={(ref) => {
+              this.map = ref;
+            }}
             style={styles.map}
             initialRegion={{
               latitude: LATITUDE,
@@ -64,14 +79,14 @@ class Map extends React.Component {
               longitudeDelta: LONGITUDE_DELTA,
             }}
             onRegionChange={this.onRegionChange}
-          ></MapView>
+          />
           <View style={styles.markerFixed}>
             <Image style={styles.marker} source={marker} />
           </View>
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={[styles.bubble, styles.button]}
-              onPress={() => this.props.navigation.navigate(this.props.route.params.ParentScreen, { region: this.state.coordinate })}
+              onPress={this.handlePress}
             >
               <Text>Choisir cet emplacement </Text>
             </TouchableOpacity>
@@ -100,7 +115,7 @@ const styles = StyleSheet.create({
   buttonContainer: tw`flex-row my-20 bg-transparent`,
   container: tw`flex flex-1 bg-white items-center justify-center`,
   safecontainer: tw`flex flex-1`,
-  markerFixed: tw`top-75% -ml-24 -mt-48 absolute`,
+  markerFixed: tw`top-50% -mt-10 absolute`,
   marker: tw`w-10 h-10`
 });
 
