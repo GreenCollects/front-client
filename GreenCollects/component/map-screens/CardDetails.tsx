@@ -3,26 +3,31 @@ import { Button, Card, Icon, Text} from "@ui-kitten/components"
 import { StyleSheet, View } from "react-native";
 import tw from "twrnc"
 
-const crossIcon = (props : any) => <Icon {...props} name="close-outline" />;
-const heartIcon = (props : any) => <Icon  {...props} name="heart-outline" />;
-const heartFillIcon = (props : any) => <Icon  {...props} name="heart" />;
-const minusIcon = (props : any) => <Icon  {...props} name="minus-circle-outline" />
-const minusFillIcon = (props : any) => <Icon  {...props} name="minus-circle" />
+import { crossIcon,heartIcon, minusIcon } from "../icons/icons";
 
 
 const CardDetails = (props : any) => {
 
-  const HeaderDetails = () => (
-    <View style={tw`flex-row justify-around`}>
+  const nameOrAddress = (address:any) => {
+    if (address.name !== address.subThoroughfare) {
+      return address.name
+    }
+    else {
+      return address.subThoroughfare + " " + address.thoroughfare
+    }
+  }
+
+  const headerDetails = () => (
+    <View style={tw`flex-row justify-between items-center ml-6 pt-2`}>
       <View>
-        <Text category="h6">props.title</Text>
-        <Text category="s1">props.address</Text>
+        <Text category="h6">{nameOrAddress(props.address)}</Text>
+        {console.log(props.address)}
       </View>
-      <Button appearance="ghost" status="basic" accessoryLeft={crossIcon} onPress={() => props.parent.setState({visibleDetails : false})}/>
+      <Button appearance="ghost" status="basic" accessoryLeft={crossIcon} onPress={props.deselect}/>
     </View>
   );
 
-  const FooterDetails = () => (
+  const footerDetails = () => (
     <View>
       <View style={tw`flex-row justify-around`}>
         <Button appearance="ghost" status="danger" accessoryLeft={minusIcon}/>
@@ -32,14 +37,14 @@ const CardDetails = (props : any) => {
   );
 
   return (
+    
     <Card
     status="success"
-    header={HeaderDetails}
-    footer={FooterDetails}
-    style={ styles.cardDetail}
-    // style={{ display : displayCard ? "flex" : "none" }}
-  >
-    <Text >Type de déchets : </Text>
+    header={headerDetails}
+    footer={footerDetails}
+    style={styles.cardDetail}
+    >
+    <Text >Déchets : </Text>
   </Card>
   );
 };
