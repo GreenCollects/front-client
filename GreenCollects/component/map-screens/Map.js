@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   StyleSheet,
   View,
@@ -32,7 +32,6 @@ const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 const markers = [
   {
     id: 0,
-    amount: 99,
     coordinate: {
       latitude: LATITUDE,
       longitude: LONGITUDE,
@@ -40,7 +39,6 @@ const markers = [
   },
   {
     id: 1,
-    amount: 199,
     coordinate: {
       latitude: LATITUDE + 0.004,
       longitude: LONGITUDE - 0.004,
@@ -48,7 +46,6 @@ const markers = [
   },
   {
     id: 2,
-    amount: 285,
     coordinate: {
       latitude: LATITUDE - 0.004,
       longitude: LONGITUDE - 0.004,
@@ -56,126 +53,111 @@ const markers = [
   },
 ];
 
-class Map extends React.Component {
-  constructor(props) {
-    super(props);
+const Map = (props) => {
+  const [coordinate, setCoordinate] = useState({
+    latitude: LATITUDE,
+    longitude: LONGITUDE,
+  });
+  const [radius, setRadius] = useState(5000);
+  const [visibleDetails, setVisibleDetails] = useState(false);
+  const [selectedMarker, setSelectedMarker] = useState({});
+  const [selectedAddress, setSelectedAddress] = useState({});
+  const map = useRef(null);
 
-    this.state = {
-      coordinate: new AnimatedRegion({
-        latitude: LATITUDE,
-        longitude: LONGITUDE,
-      }),
-      radius: 5000,
-      visibleDetails: false,
-      selectedMarker: {},
-    };
-  }
-
-  updateRadius = (radius) => {
-    this.setState({
-      radius: radius,
-    });
-    this.animate(radius);
+  const updateRadius = (radius) => {
+    setRadius(radius);
+    animate(radius);
   };
 
-  animate(radius) {
+  const animate = (radius) => {
     let r = {
       latitude: LATITUDE,
       longitude: LONGITUDE,
       latitudeDelta: (radius / 1000 / 111) * 4,
       longitudeDelta: (radius / 1000 / 111) * ASPECT_RATIO,
     };
-    this.map.animateToRegion(r, 2000);
-  }
-
-  componentDidUpdate = (prevProps) => {
-    const getAddress = async () => {
-      const changeProps = this.props.route?.params?.region;
-      if (
-        changeProps !== undefined &&
-        changeProps !== prevProps?.route?.params?.region
-      ) {
-        const newAddress = await this.map.addressForCoordinate(changeProps);
-        this.props.navigation.push("AddPoint", {
-          region: changeProps,
-          address: newAddress,
-        });
-      }
-    };
-    getAddress().catch((e) => console.log(e));
+    map.animateToRegion(r, 2000);
   };
 
-  zoomAndDisplayDetails(props) {
-    // .coordinate,marker.id,marker.label,marker.wastes
 
-    this.setState({ selectedMarker: props.marker });
-    this.setState({ visibleDetails: true });
-  }
+  const zoomAndDisplayDetails = (marker) => {
+    const getAddress = async () => {
+      const address = await map.current.addressForCoordinate(marker.coordinate);
+      setSelectedMarker(marker);
+      setSelectedAddress(address);
+      setVisibleDetails(true);
+    };
+    getAddress().catch((e) => console.log(e));
 
-  DeselectMarkerAndHGideDetails(props) {
-    this.setState({ selectedMarker: {} });
-    this.setState({ visibleDetails: false });
-  }
+    // TODO : ZOOM
+  };
 
-  render() {
-    return (
-      <SafeAreaView style={styles.safecontainer}>
-        <FilteringKm updateRadius={this.updateRadius} />
-        <View style={styles.mapcontainer}>
-          <MapView
-            provider={this.props.provider}
-            ref={(ref) => {
-              this.map = ref;
-            }}
-            style={styles.map}
-            initialRegion={{
-              latitude: LATITUDE,
-              longitude: LONGITUDE,
-              latitudeDelta: (this.state.radius / 1000 / 111) * 4,
-              longitudeDelta: (this.state.radius / 1000 / 111) * ASPECT_RATIO,
-            }}
-            onPress={() => this.DeselectMarkerAndHGideDetails()}
+  const deselectMarkerAndHGideDetails = () => {
+    setSelectedMarker({});
+    setSelectedAddress({});
+    setVisibleDetails(false);
+  };
+  
+  return (
+    <SafeAreaView style={styles.safecontainer}>
+      <View style={styles.mapcontainer}>
+        <MapView
+          provider={props.provider}
+          ref={map}
+          style={styles.map}
+          initialRegion={{
+            latitude: LATITUDE,
+            longitude: LONGITUDE,
+            latitudeDelta: (radius / 1000 / 111) * 4,
+            longitudeDelta: (radius / 1000 / 111) * ASPECT_RATIO,
+          }}
+          onPress={deselectMarkerAndHGideDetails}
+        >
+          <MapView.Circle
+            center={{ latitude: LATITUDE, longitude: LONGITUDE }}
+            radius={radius}
+            strokeWidth={1}
+            strokeColor={"#1a66ff"}
+            fillColor={"rgba(230,238,255,0.5)"}
+          />
+          {markers.map((marker, i) => {
+            return (
+              <Marker
+                key={i}
+                coordinate={marker.coordinate}
+                onSelect={() => zoomAndDisplayDetails(marker)}
+                onPress={() => zoomAndDisplayDetails(marker)}
+              />
+            );
+          })}
+        </MapView>
+
+        <FilteringKm updateRadius={updateRadius} />
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={[styles.bubble, styles.button]}
+            onPress={() =>
+              props.navigation.push("AddCollect", {
+                ParentScreen: "AddPoint",
+              })
+            }
           >
-            <MapView.Circle
-              center={{ latitude: LATITUDE, longitude: LONGITUDE }}
-              radius={this.state.radius}
-              strokeWidth={1}
-              strokeColor={"#1a66ff"}
-              fillColor={"rgba(230,238,255,0.5)"}
-            />
-            {markers.map((marker) => {
-              return (
-                <Marker
-                  key={marker.id}
-                  coordinate={marker.coordinate}
-                  onSelect={() => this.zoomAndDisplayDetails(marker)}
-                  onPress={() => this.zoomAndDisplayDetails(marker)}
-                />
-              );
-            })}
-          </MapView>
-
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={[styles.bubble, styles.button]}
-              onPress={() =>
-                this.props.navigation.push("AddCollect", {
-                  ParentScreen: "Map",
-                })
-              }
-            >
-              <Image style={styles.icon} source={addIcon} />
-            </TouchableOpacity>
-          </View>
-
-          {this.state.visibleDetails && (
-            <CardDetails parent={this} marker={this.state.selectedMarker} />
-          )}
+            <Image style={styles.icon} source={addIcon} />
+          </TouchableOpacity>
         </View>
-      </SafeAreaView>
-    );
-  }
-}
+
+        {visibleDetails && (
+          <CardDetails
+            deselect={deselectMarkerAndHGideDetails}
+            marker={selectedMarker}
+            address={selectedAddress}
+          />
+        )}
+      </View>
+    </SafeAreaView>
+  );
+};
 
 Map.propTypes = {
   provider: ProviderPropType,
