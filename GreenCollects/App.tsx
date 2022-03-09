@@ -5,10 +5,11 @@ import { EvaIconsPack } from "@ui-kitten/eva-icons";
 import { ApplicationProvider, IconRegistry } from "@ui-kitten/components";
 import AppNavigator from "./component/navigation/AppNavigator";
 import configureStore from "./component/store/Store";
-import { Provider } from 'react-redux';
-import { PersistGate } from  'redux-persist/es/integration/react'
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/es/integration/react";
+import { RootSiblingParent } from "react-native-root-siblings";
 
-const {store, persistor} = configureStore();
+const { store, persistor } = configureStore();
 
 export default function App() {
     return (
@@ -17,7 +18,9 @@ export default function App() {
             <Provider store={store}>
                 <PersistGate loading={null} persistor={persistor}>
                     <ApplicationProvider {...eva} theme={eva.light}>
-                        <AppNavigator />
+                        <RootSiblingParent>
+                            <AppNavigator />
+                        </RootSiblingParent>
                     </ApplicationProvider>
                 </PersistGate>
             </Provider>

@@ -7,7 +7,7 @@ import { BottomNavigation, BottomNavigationTab } from "@ui-kitten/components";
 import { CalendarIcon, MapIcon, PersonIcon } from "../icons/icons";
 
 const Navbar = ({ navigation, state }: any) => {
-    const [selectedIndex, setSelectedIndex] = useState();
+    const [selectedIndex, setSelectedIndex] = useState(1);
 
     const handleSelect = (index: any) => {
         setSelectedIndex(index);
@@ -20,7 +20,7 @@ const Navbar = ({ navigation, state }: any) => {
             onSelect={handleSelect}
             style={styles.navigation}
         >
-            <BottomNavigationTab icon={<CalendarIcon />} title="ORGANISER" />
+            <BottomNavigationTab icon={<CalendarIcon />} title="ORGANISATION" />
             <BottomNavigationTab icon={<MapIcon />} title="CARTE" />
             <BottomNavigationTab icon={<PersonIcon />} title="PROFIL" />
         </BottomNavigation>
