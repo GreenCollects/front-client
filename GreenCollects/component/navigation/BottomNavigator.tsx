@@ -2,7 +2,6 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React from "react";
 import CollectCreation from "../CollectCreation";
 import Navbar from "../shared/Navbar";
-import UserProfil from "../Profil";
 import MapNavigator from "./MapNavigator";
 import UserNavigator from "./UserNavigator";
 

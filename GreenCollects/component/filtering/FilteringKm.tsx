@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, Icon } from '@ui-kitten/components';
 import tw from 'twrnc';
 import ChooseKm from "./ChooseKm";
-import { ChevronIcon } from "../icons/icons";
+import { ChevronDownIcon } from "../icons/icons";
 
 const DISTANCES = [3, 5, 10, 15, 30];
 
@@ -14,7 +14,7 @@ const FilteringKm = ({updateRadius}:any) => {
 
     return (
         <View style={styles.safecontainer}>
-            <Button style={styles.button} accessoryRight={ChevronIcon} onPress={() => {
+            <Button style={styles.button} accessoryRight={ChevronDownIcon} onPress={() => {
                 setVisible(true);
                 }
             }>

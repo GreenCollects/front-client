@@ -5,16 +5,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import tw from "twrnc";
 
-import TopNavigation from "./shared/TopNavigation";
-import Login from "./shared/Login";
+import TopNavigation from "../shared/TopNavigation";
+import Login from "../shared/Login";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
-import Register from "./shared/Register";
+import Register from "../shared/Register";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "./store/Store";
+import { RootState } from "../store/Store";
 import { Button, Card } from "@ui-kitten/components";
-import environment from "../environment";
-import { LOGOUT, PROFIL } from "./store/types";
+import environment from "../../environment";
+import { LOGOUT, PROFIL } from "../store/types";
 
 const Stack = createNativeStackNavigator();
 
