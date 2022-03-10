@@ -8,12 +8,10 @@ import {
   SafeAreaView,
 } from "react-native";
 
-import MapView, {
-  ProviderPropType,
-  Marker,
-  AnimatedRegion,
-} from "react-native-maps";
-
+import MapView, { ProviderPropType, Marker } from "react-native-maps";
+import { useSelector } from "react-redux";
+import { getPoints } from "../api/point";
+import { getAllWasteType } from "../api/waste";
 import tw from "twrnc";
 
 import addIcon from "../../assets/add-collect-plus.png";
@@ -28,30 +26,30 @@ const LONGITUDE = 5.724524;
 const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
-//Hardcoded value markers TO REMOVE
-const markers = [
-  {
-    id: 0,
-    coordinate: {
-      latitude: LATITUDE,
-      longitude: LONGITUDE,
-    },
-  },
-  {
-    id: 1,
-    coordinate: {
-      latitude: LATITUDE + 0.004,
-      longitude: LONGITUDE - 0.004,
-    },
-  },
-  {
-    id: 2,
-    coordinate: {
-      latitude: LATITUDE - 0.004,
-      longitude: LONGITUDE - 0.004,
-    },
-  },
-];
+// //Hardcoded value markers TO REMOVE
+// const markers = [
+//   {
+//     id: 0,
+//     coordinate: {
+//       latitude: LATITUDE,
+//       longitude: LONGITUDE,
+//     },
+//   },
+//   {
+//     id: 1,
+//     coordinate: {
+//       latitude: LATITUDE + 0.004,
+//       longitude: LONGITUDE - 0.004,
+//     },
+//   },
+//   {
+//     id: 2,
+//     coordinate: {
+//       latitude: LATITUDE - 0.004,
+//       longitude: LONGITUDE - 0.004,
+//     },
+//   },
+// ];
 
 const Map = (props) => {
   const [coordinate, setCoordinate] = useState({
@@ -62,34 +60,40 @@ const Map = (props) => {
   const [visibleDetails, setVisibleDetails] = useState(false);
   const [selectedMarker, setSelectedMarker] = useState({});
   const [selectedAddress, setSelectedAddress] = useState({});
+  const [markers, setMarkers] = useState([]);
+  const [newMarker, setNewMarker] = useState({});
+  const [wasteLabels, setWasteLabels] = useState([]);
   const map = useRef(null);
+  const token = useSelector((state) => state.authentication.token);
 
   const updateRadius = (radius) => {
     setRadius(radius);
-    animate(radius);
+    animate({ latitude: LATITUDE, longitude: LONGITUDE }, radius, 2000);
   };
 
-  const animate = (radius) => {
+  const animate = (region, radius, time) => {
     let r = {
-      latitude: LATITUDE,
-      longitude: LONGITUDE,
+      latitude: region.latitude,
+      longitude: region.longitude,
       latitudeDelta: (radius / 1000 / 111) * 4,
       longitudeDelta: (radius / 1000 / 111) * ASPECT_RATIO,
     };
-    map.animateToRegion(r, 2000);
+    map.current.animateToRegion(r, time);
   };
 
-
   const zoomAndDisplayDetails = (marker) => {
+    const region = {
+      latitude: marker.latitude,
+      longitude: marker.longitude,
+    };
     const getAddress = async () => {
-      const address = await map.current.addressForCoordinate(marker.coordinate);
+      const address = await map.current.addressForCoordinate(region);
       setSelectedMarker(marker);
       setSelectedAddress(address);
       setVisibleDetails(true);
     };
-    getAddress().catch((e) => console.log(e));
-
-    // TODO : ZOOM
+    getAddress().catch((err) => console.log(err));
+    animate(region, 500,500);
   };
 
   const deselectMarkerAndHGideDetails = () => {
@@ -97,7 +101,44 @@ const Map = (props) => {
     setSelectedAddress({});
     setVisibleDetails(false);
   };
-  
+
+  const onRegionChange = (region) => {
+    setCoordinate(region);
+  };
+
+  useEffect(() => {
+    const getAllPoints = async () => {
+      const headers = new Headers();
+      headers.append("Accept", "application/json");
+      headers.append("Content-Type", "application/json");
+      headers.append("Authorization", "Token " + token);
+      const data = await getPoints(headers);
+
+      if (data !== undefined) {
+        setMarkers(data);
+      }
+    };
+    getAllPoints().catch((err) => console.log(err));
+  }, [radius, newMarker]);
+
+  useEffect(() => {
+    const getAllWasteLabel = async () => {
+      const headers = new Headers();
+      headers.append("Accept", "application/json");
+      headers.append("Content-Type", "application/json");
+      headers.append("Authorization", "Token " + token);
+
+      const data = await getAllWasteType(headers);
+      if (data !== undefined) {
+        const fetched_labels = data?.map((value) => {
+          return value.label;
+        });
+        setWasteLabels(fetched_labels);
+      }
+    };
+    getAllWasteLabel().catch(err => console.log(err))
+  }, []);
+
   return (
     <SafeAreaView style={styles.safecontainer}>
       <View style={styles.mapcontainer}>
@@ -112,6 +153,7 @@ const Map = (props) => {
             longitudeDelta: (radius / 1000 / 111) * ASPECT_RATIO,
           }}
           onPress={deselectMarkerAndHGideDetails}
+          onRegionChange={onRegionChange}
         >
           <MapView.Circle
             center={{ latitude: LATITUDE, longitude: LONGITUDE }}
@@ -124,7 +166,10 @@ const Map = (props) => {
             return (
               <Marker
                 key={i}
-                coordinate={marker.coordinate}
+                coordinate={{
+                  latitude: marker.latitude,
+                  longitude: marker.longitude,
+                }}
                 onSelect={() => zoomAndDisplayDetails(marker)}
                 onPress={() => zoomAndDisplayDetails(marker)}
               />
@@ -140,6 +185,7 @@ const Map = (props) => {
             onPress={() =>
               props.navigation.push("AddCollect", {
                 ParentScreen: "AddPoint",
+                newMarker: setNewMarker,
               })
             }
           >
@@ -152,6 +198,7 @@ const Map = (props) => {
             deselect={deselectMarkerAndHGideDetails}
             marker={selectedMarker}
             address={selectedAddress}
+            wasteLabels = {wasteLabels}
           />
         )}
       </View>
