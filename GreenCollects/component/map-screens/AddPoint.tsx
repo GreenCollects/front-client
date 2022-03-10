@@ -9,20 +9,25 @@ import {
   SelectItem,
 } from "@ui-kitten/components";
 import tw from "twrnc";
-// import { getAllWasteType } from "../api/waste.tsx";
+import { getAllWasteType } from "../api/waste";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/Store";
+import Toast from "react-native-root-toast";
+import { createPoint } from "../api/point";
+import { nameOrAddress } from "./CardDetails";
 
 export const AddPoint = (props: any) => {
-  const [visible, setVisible] = useState(false);
   const [labels, setLabels] = useState([]);
-
+  const [wastes, setWastes] = useState([]);
   const [selectedLabels, setSelectedLabels] = useState([]);
   const [locationValue, setLocationValue] = useState({
     locality: "",
     postalCode: "",
     address: "",
   });
-
   const [error, setError] = useState("");
+  const token = useSelector((state: RootState) => state.authentication.token);
+  const user = useSelector((state: RootState) => state.authentication.user);
 
   const printedValue = selectedLabels.map((selectedLabel) => {
     return labels[selectedLabel - 1];
@@ -39,25 +44,92 @@ export const AddPoint = (props: any) => {
       selectedLabels.length !== 0
     ) {
       setError("");
+      const postData = async () => {
+        const headers = new Headers();
+        headers.append("Accept", "application/json");
+        headers.append("Content-Type", "application/json");
+        headers.append("Authorization", "Token " + token);
+
+        const wastesId = wastes.map((waste: any, index) => {
+          let id;
+          for (let i = 0; i < printedValue.length; i++) {
+            if (printedValue[i] === waste.label) {
+              id = waste.id;
+            }
+          }
+
+          return id ? id : -1;
+        });
+
+        const filteredWastesId = wastesId.filter((elt) => elt !== -1);
+
+        const body = {
+          label: nameOrAddress(props.route.params.address),
+          latitude: props.route.params.region.latitude,
+          longitude: props.route.params.region.longitude,
+          wastes: filteredWastesId,
+          user: user.id,
+        };
+
+        const data: any = await createPoint(headers, JSON.stringify(body));
+
+        if (data !== undefined) {
+          Toast.show("Point de collecte créé avec succès !", {
+            duration: Toast.durations.SHORT,
+            position: Toast.positions.BOTTOM,
+            shadow: true,
+            animation: true,
+            hideOnPress: true,
+            delay: 0,
+            backgroundColor: "#54e096",
+            textColor: "#fff",
+          });
+          props.route.params.newMarker(data)
+          props.navigation.popToTop();
+        }
+      };
+      postData().catch((err) => console.log(err));
     } else {
       setError("Aucun des champs ne doit être vide.");
     }
   };
 
-  // useEffect(() => {
-  //   const getData = async () => {
-  //     const data = [{id : 3, label : "pile"}, ]
-  //     // await getAllWasteType();
-  //     const fetched_labels = data.map((value: any) => {
-  //       return value.label;
-  //     });
+  useEffect(() => {
+    if (token !== "") {
+      const getData = async () => {
+        const headers = new Headers();
+        headers.append("Accept", "application/json");
+        headers.append("Content-Type", "application/json");
+        headers.append("Authorization", "Token " + token);
 
-  //     setLabels(fetched_labels);
-  //   };
+        const data = await getAllWasteType(headers);
+        if (data !== undefined) {
+          const fetched_labels = data?.map((value: any) => {
+            return value.label;
+          });
 
-  //   getData().catch((err) => console.log(err));
-  // })
-  // , [getAllWasteType]);
+          setWastes(data);
+          setLabels(fetched_labels);
+        }
+      };
+
+      getData().catch((err) => console.log(err));
+    } else {
+      // TODO: Gérer le token avec des stack de connexion
+    }
+  }, [getAllWasteType, token]);
+
+  useEffect(() => {
+    setLocationValue({
+      locality: props.route.params?.address?.locality,
+      postalCode: props.route.params?.address?.postalCode,
+      address: props.route.params?.address?.subThoroughfare
+        ? props.route.params?.address?.subThoroughfare +
+          " " +
+          props.route.params?.address?.thoroughfare
+        : props.route.params?.address?.thoroughfare,
+    });
+  }, [props.route.params]);
 
   return (
     <SafeAreaView style={styles.safecontainer}>
@@ -83,38 +155,20 @@ export const AddPoint = (props: any) => {
             </Select>
           </View>
           <View style={styles.formLocation}>
+            <View>
+              <Text style={styles.positionLabel}> Adresse</Text>
+              <Input value={locationValue.address} disabled={true} />
+            </View>
             <View style={tw`flex flex-row`}>
-              <View style= {tw`flex flex-1`}>
-                <Text style={styles.positionLabel}>
-                  Ville
-                </Text>
-                <Input
-                  placeholder={props.route.params.address.locality}
-                  disabled={true}
-                  value={locationValue.locality}
-                />
+              <View style={tw`flex flex-1`}>
+                <Text style={styles.positionLabel}>Ville</Text>
+                <Input disabled={true} value={locationValue.locality}/>
               </View>
-              <View style= {tw`flex flex-1`}>
+              <View style={tw`flex flex-1`}>
                 <Text style={styles.positionLabel}> Code postal</Text>
-                <Input
-                  placeholder={props.route.params.address.postalCode}
-                  disabled={true}
-                  value={locationValue.postalCode}
-                />
+                <Input disabled={true} value={locationValue.postalCode} />
               </View>
             </View>
-            <Text style={styles.positionLabel}> Adresse</Text>
-            <Input
-              placeholder={
-                props.route.params.address.subThoroughfare
-                  ? props.route.params.address.subThoroughfare +
-                    " " +
-                    props.route.params.address.thoroughfare
-                  : props.route.params.address.thoroughfare
-              }
-              value={locationValue.address}
-              disabled={true}
-            />
           </View>
         </View>
 

@@ -38,12 +38,12 @@ const AddCollectMap = (props) => {
 
   const handlePress = () => {
     const getAddress = async () => {
-      console.log(map.current )
       const address = await map.current.addressForCoordinate(coordinate);
       setAddress(address);
       props.navigation.navigate(props.route.params.ParentScreen, {
         region: coordinate,
         address: address,
+        newMarker : props.route.params?.newMarker
       });
     };
 
