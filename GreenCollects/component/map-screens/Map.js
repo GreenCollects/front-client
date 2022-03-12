@@ -16,8 +16,9 @@ import MapView, {
 
 import tw from "twrnc";
 
-import addIcon from "../../assets/add-collect-plus.png";
+import { AddIcon, FilterIcon } from "../icons/icons"
 import FilteringKm from "../filtering/FilteringKm";
+import Filters from "./Filters";
 
 const screen = Dimensions.get("window");
 
@@ -141,17 +142,21 @@ class Map extends React.Component {
 
           <View style={styles.buttonContainer}>
             <TouchableOpacity
-              style={[styles.bubble, styles.button]}
+              style={styles.addBubble}
               onPress={() =>
                 this.props.navigation.push("AddCollect", {
                   ParentScreen: "Map",
                 })
               }
             >
-              <Image style={styles.icon} source={addIcon} />
+              <AddIcon style={styles.icon} fill='#fff' />
             </TouchableOpacity>
           </View>
+
+          <Filters />
+
         </View>
+
       </SafeAreaView>
     );
   }
@@ -170,11 +175,10 @@ const styles = StyleSheet.create({
   map: {
     ...StyleSheet.absoluteFillObject,
   },
-  bubble: tw`flex-1 bg-transparent py-3 rounded-full `,
-  button: tw`w-10 pr-12 mx-8`,
+  addBubble: tw`bg-[#54e096] rounded-full mr-4 mb-4`,
   container: tw`flex flex-1 bg-white items-center justify-center`,
   safecontainer: tw`flex flex-1`,
-  icon: tw`w-15 h-15`,
+  icon: tw`w-12 h-12`,
   buttonContainer: tw`bottom-0 right-0 absolute `,
 });
 
