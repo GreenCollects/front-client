@@ -28,6 +28,7 @@ const BottomNavigator = () => {
                 component={MapNavigator}
                 options={{
                     title: "Carte",
+                    headerShown: false
                 }}
             />
             <BottomTab.Screen
