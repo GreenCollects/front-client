@@ -35,15 +35,12 @@ export const EyeIcon = (props: any) => <Icon {...props} name="eye-outline" />;
 
 export const AlertCicleIcon = (props: any) => <Icon {...props} name="alert-circle-outline" />;
 
-<<<<<<< HEAD
 export const crossIcon = (props : any) => <Icon {...props} name="close-outline" />;
 export const heartIcon = (props : any) => <Icon  {...props} name="heart-outline" />;
 export const heartFillIcon = (props : any) => <Icon  {...props} name="heart" />;
 export const minusIcon = (props : any) => <Icon  {...props} name="minus-circle-outline" />
 export const minusFillIcon = (props : any) => <Icon  {...props} name="minus-circle" />
-=======
 export const ShareIcon = (props: any) => <Icon {...props} name="share-outline" />;
 
 export const DoneIcon = (props: any) => <Icon {...props} name="checkmark-outline" />;
 
->>>>>>> feat/user
