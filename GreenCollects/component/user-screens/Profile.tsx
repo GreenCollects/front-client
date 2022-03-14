@@ -162,7 +162,7 @@ const UserProfil = (props: any) => {
 
 // Variable to store and centralized style for these components
 const styles = StyleSheet.create({
-    safecontainer: tw`flex flex-1`,
+    safecontainer: tw`flex flex-1 bg-white`,
     container: tw`flex`,
     buttonContainer: tw`mb-4`,
     title: tw`text-center text-3xl mb-8 text-slate-500`,

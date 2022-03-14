@@ -21,6 +21,7 @@ const LastName = (props:any) => {
                 <Input
                     value={value}
                     onChangeText={nextValue => setValue(nextValue)}
+                    style={tw`bg-white`}
                 />
             </View>
         </SafeAreaView>
@@ -28,7 +29,7 @@ const LastName = (props:any) => {
 }
 
 const styles = StyleSheet.create({
-    safecontainer: tw`flex flex-1`,
+    safecontainer: tw`flex flex-1 bg-white`,
     container: tw`flex`,
     title: tw`text-center text-3xl mb-8 text-slate-500`,
 

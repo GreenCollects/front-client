@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { PersonIcon } from "../icons/icons";
 import { ShareIcon } from "../icons/icons";
-import { DoneIcon } from "../icons/icons";
+
 
 
 
@@ -15,11 +15,11 @@ import TopNavigation from "../shared/TopNavigation";
 
 const AccountDetails = (props:any) => {
 
-    const MyProfileNavigation = () => {
+    const myProfileNavigation = () => {
         props.navigation.navigate("Mon Profil")
     }
 
-    const MyCollectionsNavigation = () => {
+    const myCollectionsNavigation = () => {
         props.navigation.navigate("Mes Collectes")
     }
 
@@ -28,7 +28,7 @@ const AccountDetails = (props:any) => {
             <View>
                 <TouchableOpacity
                     style={[styles.button, styles.shadow]}
-                    onPress={MyProfileNavigation}
+                    onPress={myProfileNavigation}
                 >
                     <PersonIcon style={styles.icon} fill='#54e096'/>
                     <Text style={styles.text}>Mon Profil</Text>
@@ -38,7 +38,7 @@ const AccountDetails = (props:any) => {
             <View>
                 <TouchableOpacity
                     style={[styles.button, styles.shadow]}
-                    onPress={MyCollectionsNavigation}
+                    onPress={myCollectionsNavigation}
                 >
                     <ShareIcon style={styles.icon} fill='#54e096'/>
                     <Text style={styles.text}>Mes Collectes</Text>
