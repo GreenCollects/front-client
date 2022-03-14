@@ -62,7 +62,6 @@ const UserProfil = (props: any) => {
             });
 
             const data: any = await logout(headers, body);
-            console.log(data);
 
             if (data !== undefined) {
                 Toast.show("Déconnexion réussie", {

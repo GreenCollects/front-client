@@ -1,13 +1,12 @@
 import React, { useEffect, useState, FC } from "react";
-import { Button, Card, Icon, Text } from "@ui-kitten/components";
+import { Button, Card, Text, Spinner } from "@ui-kitten/components";
 import { StyleSheet, View } from "react-native";
 import tw from "twrnc";
 
-import { CrossIcon, ArrowDownIcon, ArrowUpIcon } from "../icons/icons";
+import { CrossIcon, ArrowDownIcon, ArrowDownFillIcon, ArrowUpFillIcon, ArrowUpIcon } from "../icons/icons";
 import { RootState } from "../store/Store";
-import { useDispatch, useSelector } from "react-redux";
-import { getAllWasteType } from "../api/waste";
-import { getRating, changeRating } from "../api/rating";
+import { useSelector } from "react-redux";
+import { getRateAvarage, changeRating, getRatingForCurrentUser, deleteRating, setRating } from "../api/rating";
 
 export const nameOrAddress = (address: any) => {
     if (address.name !== address.subThoroughfare) {
@@ -27,27 +26,37 @@ type PropsType = {
 const CardDetails: FC<PropsType> = ({marker, address, wasteLabels, deselect}) => {
     const authentication = useSelector((state: RootState) => state.authentication);
 
-    const [rating, setRating] = useState({
+    const [infoRating, setInfoRating] = useState({
         "idPoint": 0,
         "rate": 0,
         "denominator": 10
     });
+    const [myRating, setMyRating] = useState(null as any);
 
     const headers = new Headers();
     headers.append("Accept", "application/json");
     headers.append("Content-Type", "application/json");
     headers.append("Authorization", "Token " + authentication.token);
 
-    useEffect(() =>{
+    useEffect(() => {
         const getRatingFromApi = async () => {
-            const data: any = await getRating(headers, marker.id);
+            const data: any = await getRateAvarage(headers, marker.id);
             if (data !== undefined) {
-                setRating(data);
+                setInfoRating(data);
             }
         }
         
         getRatingFromApi().catch((err) => (console.log(err)));
-    }, [getRating])
+
+        const getMyRating = async () => {
+            const data: any = await getRatingForCurrentUser(headers, marker.id);
+            if (data !== undefined) {
+                setMyRating(data);
+            }
+        }
+        
+        getMyRating().catch((err) => (console.log(err)));
+    }, [getRateAvarage, getRatingForCurrentUser]); // changeRating, deleteRating, setRating
 
     const headerDetails = () => (
         <View style={tw`flex-row justify-between items-center ml-6 pt-2`}>
@@ -64,19 +73,57 @@ const CardDetails: FC<PropsType> = ({marker, address, wasteLabels, deselect}) =>
     );
 
     const handleRateUp = () => {
-        changeRating(headers, JSON.stringify({
-            "point": marker.id,
-            "user": authentication.user.id,
-            "rate": 10
-        }));
+        if (myRating) {
+            if (myRating.rate !== 10) {
+                const rating = {...myRating, "rate": 10};
+                changeRating(headers, myRating.id, rating);
+                setMyRating(rating);
+            } else {
+                deleteRating(headers, myRating.id);
+                setMyRating(null);
+            }
+        } else {
+            const rating = {
+                "point": marker.id,
+                "user": authentication.user.id,
+                "rate": 10
+            };
+            setRating(headers, rating);
+        }
     }
 
     const handleRateDown = () => {
-        changeRating(headers, JSON.stringify({
-            "point": marker.id,
-            "user": authentication.user.id,
-            "rate": 0
-        }));
+        if (myRating) {
+            if (myRating.rate !== 0) {
+                const rating = {...myRating, "rate": 0};
+                changeRating(headers, myRating.id, rating);
+                setMyRating(rating);
+            } else {
+                deleteRating(headers, myRating.id);
+                setMyRating(null);
+            }
+        } else {
+            const rating = {
+                "point": marker.id,
+                "user": authentication.user.id,
+                "rate": 0
+            };
+            setRating(headers, rating);
+        }
+    }
+
+    const renderIconDown = () => {
+        if (myRating && myRating.rate < 5)
+            return (ArrowDownFillIcon)
+        else
+            return (ArrowDownIcon)
+    }
+
+    const renderIconUp = () => {
+        if (myRating && myRating.rate > 5)
+            return (ArrowUpFillIcon)
+        else
+            return (ArrowUpIcon)
     }
 
     const footerDetails = () => (
@@ -85,17 +132,17 @@ const CardDetails: FC<PropsType> = ({marker, address, wasteLabels, deselect}) =>
                 <Button
                     appearance="ghost"
                     status="success"
-                    accessoryLeft={ArrowUpIcon}
+                    accessoryLeft={renderIconUp()}
                     onPress={() => handleRateUp()}
                 />
                 {
-                    rating.idPoint !== 0 &&
-                    <Text>{rating.rate} / {rating.denominator}</Text>
+                    infoRating.idPoint !== 0 &&
+                    <Text>{infoRating.rate} / {infoRating.denominator}</Text>
                 }
                 <Button
                     appearance="ghost"
                     status="danger"
-                    accessoryLeft={ArrowDownIcon}
+                    accessoryLeft={renderIconDown()}
                     onPress={() => handleRateDown()}
                 />
             </View>
