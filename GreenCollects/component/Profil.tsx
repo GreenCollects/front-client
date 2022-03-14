@@ -62,6 +62,7 @@ const UserProfil = (props: any) => {
             });
 
             const data: any = await logout(headers, body);
+            console.log(data);
 
             if (data !== undefined) {
                 Toast.show("Déconnexion réussie", {
@@ -74,9 +75,8 @@ const UserProfil = (props: any) => {
                     backgroundColor: "#54e096",
                     textColor: "#fff",
                 });
-
-                dispatch({ type: LOGOUT });
             }
+            dispatch({ type: LOGOUT });
         };
         doLogout().catch((err) => console.log(err));
     };
