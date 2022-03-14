@@ -10,14 +10,13 @@ import {
 
 import MapView, { ProviderPropType, Marker } from "react-native-maps";
 import { useSelector } from "react-redux";
-import { getPoints } from "../api/point";
+import { getPointsInCircle } from "../api/point";
 import { getAllWasteType } from "../api/waste";
 import tw from "twrnc";
 
 import addIcon from "../../assets/add-collect-plus.png";
 import FilteringKm from "../filtering/FilteringKm";
 import CardDetails from "./CardDetails";
-import { getCollects } from "../api/collect";
 
 const screen = Dimensions.get("window");
 
@@ -26,31 +25,6 @@ const LATITUDE = 45.188529;
 const LONGITUDE = 5.724524;
 const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
-
-// //Hardcoded value markers TO REMOVE
-// const markers = [
-//   {
-//     id: 0,
-//     coordinate: {
-//       latitude: LATITUDE,
-//       longitude: LONGITUDE,
-//     },
-//   },
-//   {
-//     id: 1,
-//     coordinate: {
-//       latitude: LATITUDE + 0.004,
-//       longitude: LONGITUDE - 0.004,
-//     },
-//   },
-//   {
-//     id: 2,
-//     coordinate: {
-//       latitude: LATITUDE - 0.004,
-//       longitude: LONGITUDE - 0.004,
-//     },
-//   },
-// ];
 
 const Map = (props) => {
   const [coordinate, setCoordinate] = useState({
@@ -113,41 +87,17 @@ const Map = (props) => {
       headers.append("Content-Type", "application/json");
       headers.append("Authorization", "Token " + token);
 
-      const points = await getPoints(headers);
+      const body = {
+        latitude: LATITUDE,
+        longitude: LONGITUDE,
+        radius : radius/1000,
+      };
 
-      const collects = await getCollects(headers);
-
-      let concat = Array.from(markers)
-
-      if (points !== undefined) {
-        concat = concat.concat(points)
-      }
-
-      if (collects !== undefined) {
-        concat = concat.concat(collects)
-      }
-
-      const uniqueStringifyConcat = []
-
-      const stringifyConcat = concat.map(elt => {
-        return JSON.stringify(elt)
-      })
-
-      stringifyConcat.forEach((element) => {
-        if (!uniqueStringifyConcat.includes(element)) {
-          uniqueStringifyConcat.push(element);
-        }
-      });
-
-      concat = uniqueStringifyConcat.map(elt => {
-        return JSON.parse(elt)
-      })
-
-      setMarkers(concat)
+      const data = await getPointsInCircle(headers, JSON.stringify(body));
+      setMarkers(data? data : []);
     };
 
     getAllPoints().catch((err) => console.log(err));
-
   }, [radius, props.route.params, token]);
 
   useEffect(() => {
@@ -165,7 +115,7 @@ const Map = (props) => {
         setWasteLabels(fetched_labels);
       }
     };
-    getAllWasteLabel().catch(err => console.log(err))
+    getAllWasteLabel().catch((err) => console.log(err));
   }, []);
 
   return (
@@ -214,9 +164,8 @@ const Map = (props) => {
             onPress={() => {
               props.navigation.push("AddCollect", {
                 ParentScreen: "AddPoint",
-              })
-            }
-            }
+              });
+            }}
           >
             <Image style={styles.icon} source={addIcon} />
           </TouchableOpacity>
