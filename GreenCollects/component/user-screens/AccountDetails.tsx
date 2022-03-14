@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from "react";
 import { Text, View, StyleSheet, Alert, Button, TouchableOpacity} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 // import { Button } from '@ui-kitten/components';
@@ -6,7 +6,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { PersonIcon } from "../icons/icons";
 import { ShareIcon } from "../icons/icons";
 
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store/Store";
 
+import { getCurrentUser } from "../api/account";
+
+import { PROFIL } from "../store/types";
 
 
 import tw from "twrnc";
@@ -14,6 +19,18 @@ import tw from "twrnc";
 import TopNavigation from "../shared/TopNavigation";
 
 const AccountDetails = (props:any) => {
+
+    const token = useSelector((state: RootState) => state.authentication.token);
+    const user = useSelector((state: RootState) => state.authentication.user);
+
+    const dispatch = useDispatch();
+
+
+    useEffect(() => {
+        if (!token) {
+            props.navigation.navigate("Connexion");
+        }
+    }, [token]);
 
     const myProfileNavigation = () => {
         props.navigation.navigate("Mon Profil")

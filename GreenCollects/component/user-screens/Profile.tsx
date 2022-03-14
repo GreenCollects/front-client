@@ -19,9 +19,9 @@ import Toast from "react-native-root-toast";
 
 import {ChevronRightIcon} from "../icons/icons";
 
-const Stack = createNativeStackNavigator();
 
 const UserProfil = (props: any) => {
+
     const dispatch = useDispatch();
 
     const token = useSelector((state: RootState) => state.authentication.token);
@@ -82,20 +82,8 @@ const UserProfil = (props: any) => {
         doLogout().catch((err) => console.log(err));
     };
 
-    const goToUsername = () => {
-        props.navigation.navigate("Votre nom d'utilisateur", {username : user.username})
-    }
-
-    const goToEmail = () => {
-        props.navigation.navigate("Votre email", {email : user.email})
-    }
-
-    const goToFirstName = () => {
-        props.navigation.navigate("Votre prénom", {username : user.first_name})
-    }
-
-    const goToLastName = () => {
-        props.navigation.navigate("Votre nom", {username : user.last_name})
+    const goToUpdate = (title:any, field:any, fieldValue:any, fieldDescription:any) => {
+        props.navigation.navigate(title, {field : field, fieldValue : fieldValue, fieldDescription:fieldDescription})
     }
 
 
@@ -108,7 +96,7 @@ const UserProfil = (props: any) => {
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity
                         style={[styles.button, styles.shadow]}
-                        onPress={goToUsername}
+                        onPress={()=>goToUpdate("Votre nom d'utilisateur", "username", user.username, "Nom d'utilisateur")}
                         >
                         <Text style={styles.text}>Nom d'utilisateur</Text>
                         <Text style={styles.textInfo}>{user.username}</Text>
@@ -118,7 +106,7 @@ const UserProfil = (props: any) => {
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity
                         style={[styles.button, styles.shadow]}
-                        onPress={goToEmail}
+                        onPress={()=>goToUpdate("Votre email", "email", user.email, "Email")}
                         >
                         <Text style={styles.text}>Email</Text>
                         <Text style={styles.textInfo}>{user.email}</Text>
@@ -128,7 +116,7 @@ const UserProfil = (props: any) => {
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity
                         style={[styles.button, styles.shadow]}
-                        onPress={goToFirstName}
+                        onPress={()=>goToUpdate("Votre prénom", "first_name", user.first_name, "Prénom")}
                         >
                         <Text style={styles.text}>Prénom</Text>
                         <Text style={styles.textInfo}>{user.first_name}</Text>
@@ -138,7 +126,7 @@ const UserProfil = (props: any) => {
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity
                         style={[styles.button, styles.shadow]}
-                        onPress={goToLastName}
+                        onPress={()=>goToUpdate("Votre nom", "last_name", user.last_name, "Nom d'utilisateur")}
                         >
                         <Text style={styles.text}>Nom</Text>
                         <Text style={styles.textInfo}>{user.last_name}</Text>

@@ -168,3 +168,44 @@ export const register = async (headers: Headers, body: any) => {
         
     return brut_response;
 };
+
+export const putCurrentUser = async (headers: Headers, body: any) => {
+    const brut_response = await fetch(
+        environment.SERVER_API_URL + API_ACCOUNT_URL + "current-user-put/",
+        {
+            method: "PUT",
+            headers: headers,
+            body: body,
+        }
+    )
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                Toast.show(HTTP_MAP_ERROR_CODE[response.status], {
+                    duration: Toast.durations.SHORT,
+                    position: Toast.positions.BOTTOM,
+                    shadow: true,
+                    animation: true,
+                    hideOnPress: true,
+                    delay: 0,
+                    backgroundColor: "#f13e71",
+                    textColor: "#fff",
+                });
+            }
+        })
+        .catch((err) => {
+            Toast.show(HTTP_MAP_ERROR_CODE[503], {
+                duration: Toast.durations.SHORT,
+                position: Toast.positions.BOTTOM,
+                shadow: true,
+                animation: true,
+                hideOnPress: true,
+                delay: 0,
+                backgroundColor: "#f13e71",
+                textColor: "#fff",
+            });
+        });
+
+    return brut_response;
+};
