@@ -7,7 +7,7 @@ import { CrossIcon, ArrowDownIcon, ArrowUpIcon } from "../icons/icons";
 import { RootState } from "../store/Store";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllWasteType } from "../api/waste";
-import { getRating } from "../api/rating";
+import { getRating, changeRating } from "../api/rating";
 
 export const nameOrAddress = (address: any) => {
     if (address.name !== address.subThoroughfare) {
@@ -25,7 +25,7 @@ type PropsType = {
 };
 
 const CardDetails: FC<PropsType> = ({marker, address, wasteLabels, deselect}) => {
-    const token = useSelector((state: RootState) => state.authentication.token);
+    const authentication = useSelector((state: RootState) => state.authentication);
 
     const [rating, setRating] = useState({
         "idPoint": 0,
@@ -33,21 +33,21 @@ const CardDetails: FC<PropsType> = ({marker, address, wasteLabels, deselect}) =>
         "denominator": 10
     });
 
+    const headers = new Headers();
+    headers.append("Accept", "application/json");
+    headers.append("Content-Type", "application/json");
+    headers.append("Authorization", "Token " + authentication.token);
+
     useEffect(() =>{
         const getRatingFromApi = async () => {
-            const headers = new Headers();
-            headers.append("Accept", "application/json");
-            headers.append("Content-Type", "application/json");
-            headers.append("Authorization", "Token " + token);
-
             const data: any = await getRating(headers, marker.id);
             if (data !== undefined) {
                 setRating(data);
             }
         }
         
-        getRatingFromApi()
-    }, [getRating, rating])
+        getRatingFromApi().catch((err) => (console.log(err)));
+    }, [getRating])
 
     const headerDetails = () => (
         <View style={tw`flex-row justify-between items-center ml-6 pt-2`}>
@@ -63,6 +63,22 @@ const CardDetails: FC<PropsType> = ({marker, address, wasteLabels, deselect}) =>
         </View>
     );
 
+    const handleRateUp = () => {
+        changeRating(headers, JSON.stringify({
+            "point": marker.id,
+            "user": authentication.user.id,
+            "rate": 10
+        }));
+    }
+
+    const handleRateDown = () => {
+        changeRating(headers, JSON.stringify({
+            "point": marker.id,
+            "user": authentication.user.id,
+            "rate": 0
+        }));
+    }
+
     const footerDetails = () => (
         <View>
             <View style={tw`flex-row justify-around`}>
@@ -70,6 +86,7 @@ const CardDetails: FC<PropsType> = ({marker, address, wasteLabels, deselect}) =>
                     appearance="ghost"
                     status="success"
                     accessoryLeft={ArrowUpIcon}
+                    onPress={() => handleRateUp()}
                 />
                 {
                     rating.idPoint !== 0 &&
@@ -79,6 +96,7 @@ const CardDetails: FC<PropsType> = ({marker, address, wasteLabels, deselect}) =>
                     appearance="ghost"
                     status="danger"
                     accessoryLeft={ArrowDownIcon}
+                    onPress={() => handleRateDown()}
                 />
             </View>
         </View>

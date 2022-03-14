@@ -3,6 +3,7 @@ import { LOGIN, LOGOUT, PROFIL } from "../types";
 const INITIAL_STATE = {
     token: '',
     user: {
+        id: '',
         username: '',
         email: '',
         first_name: '',
