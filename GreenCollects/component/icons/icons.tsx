@@ -30,8 +30,8 @@ export const EyeIcon = (props: any) => <Icon {...props} name="eye-outline" />;
 
 export const AlertCicleIcon = (props: any) => <Icon {...props} name="alert-circle-outline" />;
 
-export const crossIcon = (props : any) => <Icon {...props} name="close-outline" />;
-export const heartIcon = (props : any) => <Icon  {...props} name="heart-outline" />;
-export const heartFillIcon = (props : any) => <Icon  {...props} name="heart" />;
-export const minusIcon = (props : any) => <Icon  {...props} name="minus-circle-outline" />
-export const minusFillIcon = (props : any) => <Icon  {...props} name="minus-circle" />
+export const CrossIcon = (props : any) => <Icon {...props} name="close-outline" />;
+
+export const ArrowUpIcon = (props : any) => <Icon  {...props} name="arrow-circle-up-outline" />
+
+export const ArrowDownIcon = (props : any) => <Icon  {...props} name="arrow-circle-down-outline" />

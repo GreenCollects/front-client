@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, FC } from "react";
 import { Button, Card, Icon, Text } from "@ui-kitten/components";
 import { StyleSheet, View } from "react-native";
 import tw from "twrnc";
 
-import { crossIcon, heartIcon, minusIcon } from "../icons/icons";
+import { CrossIcon, ArrowDownIcon, ArrowUpIcon } from "../icons/icons";
 import { RootState } from "../store/Store";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getAllWasteType } from "../api/waste";
+import { getRating } from "../api/rating";
 
 export const nameOrAddress = (address: any) => {
     if (address.name !== address.subThoroughfare) {
@@ -15,19 +16,49 @@ export const nameOrAddress = (address: any) => {
         return address.subThoroughfare + " " + address.thoroughfare;
     }
 };
-const CardDetails = (props: any) => {
+
+type PropsType = {
+    marker: any;
+    address: string;
+    wasteLabels: [];
+    deselect?: () => void;
+};
+
+const CardDetails: FC<PropsType> = ({marker, address, wasteLabels, deselect}) => {
     const token = useSelector((state: RootState) => state.authentication.token);
+
+    const [rating, setRating] = useState({
+        "idPoint": 0,
+        "rate": 0,
+        "denominator": 10
+    });
+
+    useEffect(() =>{
+        const getRatingFromApi = async () => {
+            const headers = new Headers();
+            headers.append("Accept", "application/json");
+            headers.append("Content-Type", "application/json");
+            headers.append("Authorization", "Token " + token);
+
+            const data: any = await getRating(headers, marker.id);
+            if (data !== undefined) {
+                setRating(data);
+            }
+        }
+        
+        getRatingFromApi()
+    }, [getRating, rating])
 
     const headerDetails = () => (
         <View style={tw`flex-row justify-between items-center ml-6 pt-2`}>
             <View>
-                <Text category="h6">{nameOrAddress(props.address)}</Text>
+                <Text category="h6">{nameOrAddress(address)}</Text>
             </View>
             <Button
                 appearance="ghost"
                 status="basic"
-                accessoryLeft={crossIcon}
-                onPress={props.deselect}
+                accessoryLeft={CrossIcon}
+                onPress={deselect}
             />
         </View>
     );
@@ -37,13 +68,17 @@ const CardDetails = (props: any) => {
             <View style={tw`flex-row justify-around`}>
                 <Button
                     appearance="ghost"
-                    status="danger"
-                    accessoryLeft={minusIcon}
+                    status="success"
+                    accessoryLeft={ArrowUpIcon}
                 />
+                {
+                    rating.idPoint !== 0 &&
+                    <Text>{rating.rate} / {rating.denominator}</Text>
+                }
                 <Button
                     appearance="ghost"
-                    status="success"
-                    accessoryLeft={heartIcon}
+                    status="danger"
+                    accessoryLeft={ArrowDownIcon}
                 />
             </View>
         </View>
@@ -61,8 +96,8 @@ const CardDetails = (props: any) => {
             <View>
                 <Text>
                     Déchets :
-                    {props.marker.wastes.map((index: number) => {
-                        return " " + props.wasteLabels[index - 1];
+                    {marker.wastes.map((index: number) => {
+                        return " " + wasteLabels[index - 1];
                     })}
                 </Text>
             </View>
