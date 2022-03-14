@@ -30,7 +30,7 @@ const AddCollectMap = (props) => {
     longitude: LONGITUDE,
   });
   const [address, setAddress] = useState({});
-  const map = useRef(null)
+  const map = useRef(null);
 
   const onRegionChange = (region) => {
     setCoordinate(region);
@@ -43,11 +43,11 @@ const AddCollectMap = (props) => {
       props.navigation.navigate(props.route.params.ParentScreen, {
         region: coordinate,
         address: address,
-        newMarker: props.route.params?.newMarker
+        newMarker: props.route.params?.newMarker,
       });
     };
 
-    getAddress().catch(e => console.log(e))
+    getAddress().catch((e) => console.log(e));
   };
 
   return (
@@ -67,10 +67,7 @@ const AddCollectMap = (props) => {
             longitudeDelta: LONGITUDE_DELTA,
           }}
           onRegionChange={onRegionChange}
-        ><Marker coordinate={{
-          latitude: LATITUDE,
-          longitude: LONGITUDE,
-        }} /></MapView>
+        />
         <View style={styles.markerFixed}>
           <Image style={styles.marker} source={marker} />
         </View>
