@@ -6,7 +6,7 @@ import HTTP_MAP_ERROR_CODE from "./errors";
 
 const API_POINT_URL = "/api/points/";
 
-export const createPoint = async (headers: Headers, body : any) => {
+export const createPoint = async (headers: Headers, body: any) => {
     const brut_response = await fetch(
         environment.SERVER_API_URL + API_POINT_URL,
         {
@@ -45,9 +45,9 @@ export const createPoint = async (headers: Headers, body : any) => {
         });
 
     return brut_response;
-}
+};
 
-export const getPoints= async (headers: Headers) => {
+export const getPoints = async (headers: Headers) => {
     const brut_response = await fetch(
         environment.SERVER_API_URL + API_POINT_URL,
         {
@@ -85,4 +85,4 @@ export const getPoints= async (headers: Headers) => {
         });
 
     return brut_response;
-}
+};

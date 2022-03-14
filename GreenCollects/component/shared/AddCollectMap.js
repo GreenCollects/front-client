@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import MapView, { ProviderPropType } from "react-native-maps";
+import MapView, { Marker, ProviderPropType } from "react-native-maps";
 
 import TopNavigation from "./TopNavigation";
 import tw from "twrnc";
@@ -43,7 +43,7 @@ const AddCollectMap = (props) => {
       props.navigation.navigate(props.route.params.ParentScreen, {
         region: coordinate,
         address: address,
-        newMarker : props.route.params?.newMarker
+        newMarker: props.route.params?.newMarker
       });
     };
 
@@ -67,7 +67,10 @@ const AddCollectMap = (props) => {
             longitudeDelta: LONGITUDE_DELTA,
           }}
           onRegionChange={onRegionChange}
-        ></MapView>
+        ><Marker coordinate={{
+          latitude: LATITUDE,
+          longitude: LONGITUDE,
+        }} /></MapView>
         <View style={styles.markerFixed}>
           <Image style={styles.marker} source={marker} />
         </View>
@@ -102,7 +105,7 @@ const styles = StyleSheet.create({
   buttonContainer: tw`flex-row my-20 bg-transparent`,
   container: tw`flex flex-1 bg-white items-center justify-center`,
   safecontainer: tw`flex flex-1`,
-  markerFixed: tw`top-75% -ml-24 -mt-48 absolute`,
+  markerFixed: tw`top-50% -mt-10 absolute`,
   marker: tw`w-10 h-10`,
 });
 

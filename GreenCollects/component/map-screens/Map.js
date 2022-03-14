@@ -17,6 +17,7 @@ import tw from "twrnc";
 import addIcon from "../../assets/add-collect-plus.png";
 import FilteringKm from "../filtering/FilteringKm";
 import CardDetails from "./CardDetails";
+import { getCollects } from "../api/collect";
 
 const screen = Dimensions.get("window");
 
@@ -61,7 +62,6 @@ const Map = (props) => {
   const [selectedMarker, setSelectedMarker] = useState({});
   const [selectedAddress, setSelectedAddress] = useState({});
   const [markers, setMarkers] = useState([]);
-  const [newMarker, setNewMarker] = useState({});
   const [wasteLabels, setWasteLabels] = useState([]);
   const map = useRef(null);
   const token = useSelector((state) => state.authentication.token);
@@ -93,7 +93,7 @@ const Map = (props) => {
       setVisibleDetails(true);
     };
     getAddress().catch((err) => console.log(err));
-    animate(region, 500,500);
+    animate(region, 500, 500);
   };
 
   const deselectMarkerAndHGideDetails = () => {
@@ -112,14 +112,43 @@ const Map = (props) => {
       headers.append("Accept", "application/json");
       headers.append("Content-Type", "application/json");
       headers.append("Authorization", "Token " + token);
-      const data = await getPoints(headers);
 
-      if (data !== undefined) {
-        setMarkers(data);
+      const points = await getPoints(headers);
+
+      const collects = await getCollects(headers);
+
+      let concat = Array.from(markers)
+
+      if (points !== undefined) {
+        concat = concat.concat(points)
       }
+
+      if (collects !== undefined) {
+        concat = concat.concat(collects)
+      }
+
+      const uniqueStringifyConcat = []
+
+      const stringifyConcat = concat.map(elt => {
+        return JSON.stringify(elt)
+      })
+
+      stringifyConcat.forEach((element) => {
+        if (!uniqueStringifyConcat.includes(element)) {
+          uniqueStringifyConcat.push(element);
+        }
+      });
+
+      concat = uniqueStringifyConcat.map(elt => {
+        return JSON.parse(elt)
+      })
+
+      setMarkers(concat)
     };
+
     getAllPoints().catch((err) => console.log(err));
-  }, [radius, newMarker]);
+
+  }, [radius, props.route.params, token]);
 
   useEffect(() => {
     const getAllWasteLabel = async () => {
@@ -182,11 +211,11 @@ const Map = (props) => {
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={[styles.bubble, styles.button]}
-            onPress={() =>
+            onPress={() => {
               props.navigation.push("AddCollect", {
                 ParentScreen: "AddPoint",
-                newMarker: setNewMarker,
               })
+            }
             }
           >
             <Image style={styles.icon} source={addIcon} />
@@ -198,7 +227,7 @@ const Map = (props) => {
             deselect={deselectMarkerAndHGideDetails}
             marker={selectedMarker}
             address={selectedAddress}
-            wasteLabels = {wasteLabels}
+            wasteLabels={wasteLabels}
           />
         )}
       </View>
