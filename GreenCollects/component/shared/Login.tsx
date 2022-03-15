@@ -134,7 +134,8 @@ const Login = (props: any) => {
                         <Input
                             placeholder='Username'
                             onChangeText={nextValue => handleUsernameFieldChange(nextValue)}
-                            status={renderStatus(usernameErr)}
+                            status={renderStatus(usernameErr)}"none"
+                            autoCapitalize=
                         />
                         <Text style={styles.error}>{usernameErr}</Text>
                     </View>
