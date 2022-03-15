@@ -1,5 +1,5 @@
 import React, { useEffect, useState, FC } from "react";
-import { Button, Card, Text, Spinner } from "@ui-kitten/components";
+import { Button, Card, Text, Spinner, Layout } from "@ui-kitten/components";
 import { StyleSheet, View } from "react-native";
 import tw from "twrnc";
 
@@ -32,6 +32,7 @@ const CardDetails: FC<PropsType> = ({marker, address, wasteLabels, deselect}) =>
         "denominator": 10
     });
     const [myRating, setMyRating] = useState(null as any);
+    const [loading, setLoading] = useState(true);
 
     const headers = new Headers();
     headers.append("Accept", "application/json");
@@ -41,22 +42,27 @@ const CardDetails: FC<PropsType> = ({marker, address, wasteLabels, deselect}) =>
     useEffect(() => {
         const getRatingFromApi = async () => {
             const data: any = await getRateAvarage(headers, marker.id);
-            if (data !== undefined) {
-                setInfoRating(data);
-            }
+            setInfoRating(data);
         }
-        
         getRatingFromApi().catch((err) => (console.log(err)));
 
         const getMyRating = async () => {
             const data: any = await getRatingForCurrentUser(headers, marker.id);
-            if (data !== undefined) {
-                setMyRating(data);
-            }
+            setMyRating(data);
         }
-        
         getMyRating().catch((err) => (console.log(err)));
-    }, [getRateAvarage, getRatingForCurrentUser]); // changeRating, deleteRating, setRating
+
+    }, [getRateAvarage, getRatingForCurrentUser]);
+
+    useEffect(() => {
+        if (infoRating.idPoint != 0) {
+
+            setLoading(false);
+        } 
+        else {
+            setLoading(true);
+        }
+    }, [infoRating])
 
     const headerDetails = () => (
         <View style={tw`flex-row justify-between items-center ml-6 pt-2`}>
@@ -127,26 +133,30 @@ const CardDetails: FC<PropsType> = ({marker, address, wasteLabels, deselect}) =>
     }
 
     const footerDetails = () => (
-        <View>
-            <View style={tw`flex-row justify-around`}>
-                <Button
-                    appearance="ghost"
-                    status="success"
-                    accessoryLeft={renderIconUp()}
-                    onPress={() => handleRateUp()}
-                />
-                {
-                    infoRating.idPoint !== 0 &&
-                    <Text>{infoRating.rate} / {infoRating.denominator}</Text>
-                }
-                <Button
-                    appearance="ghost"
-                    status="danger"
-                    accessoryLeft={renderIconDown()}
-                    onPress={() => handleRateDown()}
-                />
-            </View>
-        </View>
+        (!loading ?
+            (<View style={tw`flex-row justify-around`}>
+                    <Button
+                        appearance="ghost"
+                        status="success"
+                        accessoryLeft={renderIconUp()}
+                        onPress={() => handleRateUp()}
+                    />
+                    {
+                        infoRating.idPoint !== 0 &&
+                        <Text>{infoRating.rate} / {infoRating.denominator}</Text>
+                    }
+                    <Button
+                        appearance="ghost"
+                        status="danger"
+                        accessoryLeft={renderIconDown()}
+                        onPress={() => handleRateDown()}
+                    />
+            </View>): (
+                    <View style={styles.container}>
+                        <Spinner/>
+                    </View>
+            )
+        )
     );
 
     return (
@@ -155,7 +165,6 @@ const CardDetails: FC<PropsType> = ({marker, address, wasteLabels, deselect}) =>
             header={headerDetails}
             footer={footerDetails}
             style={styles.cardDetail}
-            // disabled
             accessible={false}
         >
             <View>
@@ -172,6 +181,7 @@ const CardDetails: FC<PropsType> = ({marker, address, wasteLabels, deselect}) =>
 
 const styles = StyleSheet.create({
     cardDetail: tw`absolute w-5 bottom-0  w-full`,
+    container: tw`flex-row justify-around`
 });
 
 export default CardDetails;
