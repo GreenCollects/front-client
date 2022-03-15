@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Card,
     CheckBox,
@@ -10,38 +10,17 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
 import tw from "twrnc";
 import { FilterIcon } from "../icons/icons";
-
-// TODO: Hardcoded data to change in props from Map.js
-const WASTES = [
-    {
-        id: 1,
-        label: "Piles",
-    },
-    {
-        id: 2,
-        label: "Batteries",
-    },
-    {
-        id: 3,
-        label: "Huiles",
-    },
-    {
-        id: 4,
-        label: "Pneus",
-    },
-    {
-        id: 5,
-        label: "Électroménagers",
-    },
-];
-
-const INTITIAL_SELECTED_LABELS = new Array(WASTES.length).fill(false);
+import { useSelector } from "react-redux";
+import { RootState } from "../store/Store";
 
 const Filters = (props: any) => {
-    const [selectedLabels, setSelectedLabels] = useState(
-        INTITIAL_SELECTED_LABELS
-    );
+    const [selectedLabels, setSelectedLabels] = useState<Boolean[]>([]);
+
     const [visible, setVisible] = useState(false);
+
+    useEffect(() => {
+        setSelectedLabels(new Array(props.wastes.length).fill(false));
+    }, [props.wastes]);
 
     const handlePress = () => {
         setVisible(true);
@@ -57,6 +36,8 @@ const Filters = (props: any) => {
         newSelectedLabels[i] = !selectedLabels[i];
 
         setSelectedLabels(newSelectedLabels);
+
+        props.setFilters(newSelectedLabels)
     };
 
     return (
@@ -68,9 +49,9 @@ const Filters = (props: any) => {
                 >
                     <FilterIcon style={styles.icon} fill="#fff" />
                     {selectedLabels.toString() !==
-                        INTITIAL_SELECTED_LABELS.toString() && (
-                        <View style={styles.notification} />
-                    )}
+                        new Array(selectedLabels.length)
+                            .fill(false)
+                            .toString() && <View style={styles.notification} />}
                 </TouchableOpacity>
             </View>
             <Modal
@@ -84,7 +65,7 @@ const Filters = (props: any) => {
                         Les points ayant les déchets ci-dessous seront affichés.
                     </Text>
                     <View>
-                        {WASTES.map((waste, i) => {
+                        {props.wastes.map((waste: any, i: number) => {
                             return (
                                 <CheckBox
                                     key={i}

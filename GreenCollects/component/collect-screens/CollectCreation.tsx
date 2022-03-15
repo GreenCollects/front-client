@@ -119,7 +119,7 @@ const CollectCreation = (props: any) => {
         } else {
             // TODO: Gérer le token avec des stack de connexion
         }
-    }, [getAllWasteType, token]);
+    }, [token]);
 
     useEffect(() => {
         setLocationValue({

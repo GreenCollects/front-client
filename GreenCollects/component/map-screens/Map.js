@@ -19,6 +19,8 @@ import FilteringKm from "../filtering/FilteringKm";
 import Filters from "./Filters";
 import CardDetails from "./CardDetails";
 
+import Toast from "react-native-root-toast";
+
 const screen = Dimensions.get("window");
 
 const ASPECT_RATIO = screen.width / screen.height;
@@ -38,6 +40,9 @@ const Map = (props) => {
   const [selectedAddress, setSelectedAddress] = useState({});
   const [markers, setMarkers] = useState([]);
   const [wasteLabels, setWasteLabels] = useState([]);
+  const [wastes, setWastes] = useState([])
+  const [filters, setFilters] = useState([])
+  const [filteredMarkers, setFilteredMarkers] = useState([])
   const map = useRef(null);
   const token = useSelector((state) => state.authentication.token);
 
@@ -118,12 +123,30 @@ const Map = (props) => {
           const fetched_labels = data?.map((value) => {
             return value.label;
           });
+
           setWasteLabels(fetched_labels);
+          setWastes(data)
         }
       };
       getAllWasteLabel().catch((err) => console.log(err));
     }
   }, [token]);
+
+  useEffect(() => {
+    const filtered_markers = []
+
+    for (let i = 0; i < markers.length; i++) {
+      for (let j = 0; j < markers[i].wastes.length; j++) {
+        if (filters[markers[i].wastes[j] - 1]) {
+          filtered_markers.push(markers[i])
+          break
+        }
+      }
+    }
+
+    setFilteredMarkers(filtered_markers)
+
+  }, [filters])
 
   return (
     <SafeAreaView style={styles.safecontainer}>
@@ -143,6 +166,7 @@ const Map = (props) => {
           onPress={deselectMarkerAndHGideDetails}
           onRegionChange={onRegionChange}
         >
+
           <MapView.Circle
             center={{ latitude: LATITUDE, longitude: LONGITUDE }}
             radius={radius}
@@ -150,7 +174,21 @@ const Map = (props) => {
             strokeColor={"#1a66ff"}
             fillColor={"rgba(230,238,255,0.5)"}
           />
-          {markers.map((marker, i) => {
+          {filteredMarkers.length !== 0 && filters.toString() !== new Array(wasteLabels.length).fill(false) && filteredMarkers.map((marker, i) => {
+            return (
+              <Marker
+                key={i}
+                coordinate={{
+                  latitude: marker.latitude,
+                  longitude: marker.longitude,
+                }}
+                onSelect={() => zoomAndDisplayDetails(marker)}
+                onPress={() => zoomAndDisplayDetails(marker)}
+              />
+            );
+          })}
+
+          {filteredMarkers.length === 0 && filters.toString() === new Array(wasteLabels.length).fill(false).toString() && markers.map((marker, i) => {
             return (
               <Marker
                 key={i}
@@ -165,6 +203,7 @@ const Map = (props) => {
           })}
         </MapView>
 
+
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={styles.addBubble}
@@ -178,7 +217,7 @@ const Map = (props) => {
           </TouchableOpacity>
         </View>
 
-        <Filters />
+        <Filters wastes={wastes} setFilters={setFilters} />
 
         {visibleDetails && (
           <CardDetails
@@ -191,7 +230,7 @@ const Map = (props) => {
 
       </View>
 
-    </SafeAreaView>
+    </SafeAreaView >
   );
 }
 
