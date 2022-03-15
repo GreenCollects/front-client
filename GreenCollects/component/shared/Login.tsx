@@ -24,7 +24,7 @@ const Login = (props: any) => {
     const [formValidated, setFormValidated] = useState(false);
 
     const USR_NAME_MIN_LENGTH = 1;
-    const PWD_MIN_LENGTH = 5;
+    const PWD_MIN_LENGTH = 1;
 
     const handleLogin = () => {
         const getToken = async () => {
@@ -65,8 +65,6 @@ const Login = (props: any) => {
 
     useEffect(() => {
         if (
-            !usernameErr &&
-            !passwordErr &&
             username.length >= USR_NAME_MIN_LENGTH &&
             password.length >= PWD_MIN_LENGTH
         ) {
@@ -74,31 +72,7 @@ const Login = (props: any) => {
         } else {
             setFormValidated(false);
         }
-    }, [usernameErr, passwordErr]);
-
-    const handleUsernameFieldChange = (newValue: string) => {
-        if (newValue.length < USR_NAME_MIN_LENGTH) {
-            setUsernameErr(
-                `Username to short (min ${USR_NAME_MIN_LENGTH} character)`
-            );
-        } else {
-            setUsernameErr("");
-        }
-
-        setUsername(newValue);
-    };
-
-    const handlePasswordFieldChange = (newValue: string) => {
-        if (newValue.length < PWD_MIN_LENGTH) {
-            setPasswordErr(
-                `Password to short (min ${PWD_MIN_LENGTH} character)`
-            );
-        } else {
-            setPasswordErr("");
-        }
-
-        setPassword(newValue);
-    };
+    }, [username, password]);
 
     const toggleSecureEntry = () => {
         setPasswordSecureText(!passwordSecureText);
@@ -133,7 +107,7 @@ const Login = (props: any) => {
                         </Text>
                         <Input
                             placeholder="Nom d'utilisateur"
-                            onChangeText={nextValue => handleUsernameFieldChange(nextValue)}
+                            onChangeText={nextValue => setUsername(nextValue)}
                             status={renderStatus(usernameErr)}
                             autoCapitalize="none"
                         />
@@ -146,10 +120,11 @@ const Login = (props: any) => {
                         </Text>
                         <Input
                             placeholder="Mot de passe"
-                            onChangeText={nextValue => handlePasswordFieldChange(nextValue)}
+                            onChangeText={nextValue => setPassword(nextValue)}
                             status={renderStatus(passwordErr)}
                             secureTextEntry={passwordSecureText}
                             accessoryRight={renderIcon}
+                            autoCapitalize="none"
                         />
                         <Text style={styles.error}>{passwordErr}</Text>
                     </View>

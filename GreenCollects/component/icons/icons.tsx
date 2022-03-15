@@ -46,3 +46,5 @@ export const ArrowDownIcon = (props : any) => <Icon  {...props} name="arrow-circ
 export const ArrowDownFillIcon = (props : any) => <Icon  {...props} name="arrow-circle-down" />
 
 export const ShareIcon = (props : any) => <Icon {...props} name="share-outline" />
+
+export const DoneIcon = (props : any) => <Icon {...props} name="done-outline" />

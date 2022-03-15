@@ -97,7 +97,7 @@ export const AddPoint = (props: any) => {
     };
 
     useEffect(() => {
-        if (token !== "") {
+        if (token) {
             const getData = async () => {
                 const headers = new Headers();
                 headers.append("Accept", "application/json");
@@ -119,7 +119,7 @@ export const AddPoint = (props: any) => {
         } else {
             // TODO: Gérer le token avec des stack de connexion
         }
-    }, [getAllWasteType, token]);
+    }, [token]);
 
     useEffect(() => {
         setLocationValue({

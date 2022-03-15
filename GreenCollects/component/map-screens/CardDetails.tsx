@@ -78,7 +78,7 @@ const CardDetails: FC<PropsType> = ({
     }, []);
 
     useEffect(() => {
-        if (infoRating.idPoint != 0) {
+        if (infoRating?.idPoint !== 0) {
             setLoading(false);
         } else {
             setLoading(true);
@@ -219,9 +219,9 @@ const CardDetails: FC<PropsType> = ({
                     }
                     onPress={handleRateUp}
                 />
-                {infoRating.idPoint !== 0 && (
+                {infoRating?.idPoint !== 0 && (
                     <Text>
-                        {infoRating.rate} / {infoRating.denominator}
+                        {infoRating?.rate} / {infoRating?.denominator}
                     </Text>
                 )}
                 <Button
