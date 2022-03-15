@@ -148,6 +148,10 @@ const Map = (props) => {
 
   }, [filters])
 
+  useEffect(() => {
+    setFilters(new Array(wastes.length).fill(false))
+  }, [wastes])
+
   return (
     <SafeAreaView style={styles.safecontainer}>
       <View style={styles.mapcontainer}>
