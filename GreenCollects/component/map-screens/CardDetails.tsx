@@ -249,7 +249,7 @@ const CardDetails: FC<PropsType> = ({
             header={headerDetails}
             footer={footerDetails}
             style={styles.cardDetail}
-            accessible={false}
+            disabled={true}
         >
             <View>
                 <Text>
