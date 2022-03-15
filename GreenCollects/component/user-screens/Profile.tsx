@@ -17,11 +17,9 @@ import { LOGOUT, PROFIL } from "../store/types";
 import { getCurrentUser, logout } from "../api/account";
 import Toast from "react-native-root-toast";
 
-import {ChevronRightIcon} from "../icons/icons";
-
+import { ChevronRightIcon } from "../icons/icons";
 
 const UserProfil = (props: any) => {
-
     const dispatch = useDispatch();
 
     const token = useSelector((state: RootState) => state.authentication.token);
@@ -82,100 +80,125 @@ const UserProfil = (props: any) => {
         doLogout().catch((err) => console.log(err));
     };
 
-    const goToUpdate = (title:any, field:any, fieldValue:any, fieldDescription:any) => {
-        props.navigation.navigate(title, {field : field, fieldValue : fieldValue, fieldDescription:fieldDescription})
-    }
-
+    const goToUpdate = (
+        title: any,
+        field: any,
+        fieldValue: any,
+        fieldDescription: any
+    ) => {
+        props.navigation.navigate(title, {
+            field: field,
+            fieldValue: fieldValue,
+            fieldDescription: fieldDescription,
+        });
+    };
 
     return (
         <SafeAreaView style={styles.safecontainer}>
-
-            <View style={styles.container}>
-                <View>
-                    <Text style={styles.title}>Détails de mon compte</Text>
-                    <View style={styles.buttonContainer}>
-                        <TouchableOpacity
-                        style={[styles.button, styles.shadow]}
-                        onPress={()=>goToUpdate("Votre nom d'utilisateur", "username", user.username, "Nom d'utilisateur")}
-                        >
-                        <Text style={styles.text}>Nom d'utilisateur</Text>
-                        <Text style={styles.textInfo}>{user.username}</Text>
-                        <ChevronRightIcon style={styles.icon} fill='#54e096'/>
-                    </TouchableOpacity>
-                    </View>
-                    <View style={styles.buttonContainer}>
-                        <TouchableOpacity
-                        style={[styles.button, styles.shadow]}
-                        onPress={()=>goToUpdate("Votre email", "email", user.email, "Email")}
-                        >
-                        <Text style={styles.text}>Email</Text>
-                        <Text style={styles.textInfo}>{user.email}</Text>
-                        <ChevronRightIcon style={styles.icon} fill='#54e096'/>
-                    </TouchableOpacity>
-                    </View>
-                    <View style={styles.buttonContainer}>
-                        <TouchableOpacity
-                        style={[styles.button, styles.shadow]}
-                        onPress={()=>goToUpdate("Votre prénom", "first_name", user.first_name, "Prénom")}
-                        >
-                        <Text style={styles.text}>Prénom</Text>
-                        <Text style={styles.textInfo}>{user.first_name}</Text>
-                        <ChevronRightIcon style={styles.icon} fill='#54e096'/>
-                    </TouchableOpacity>
-                    </View>
-                    <View style={styles.buttonContainer}>
-                        <TouchableOpacity
-                        style={[styles.button, styles.shadow]}
-                        onPress={()=>goToUpdate("Votre nom", "last_name", user.last_name, "Nom d'utilisateur")}
-                        >
-                        <Text style={styles.text}>Nom</Text>
-                        <Text style={styles.textInfo}>{user.last_name}</Text>
-                        <ChevronRightIcon style={styles.icon} fill='#54e096'/>
-                    </TouchableOpacity>
-                    </View>
-                    <View style={styles.buttonContainer}>
-                        <TouchableOpacity
-                        style={[styles.buttonDeco, styles.shadowDeco]}
-                        onPress={() => handleLogout()}
-                        >
-                        <Text style={styles.deco}>Déconnexion</Text>
-                    </TouchableOpacity>
-                    </View>
-                </View>
+            <Text style={styles.title}>Détails de mon compte</Text>
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                    style={[styles.button, styles.shadow]}
+                    onPress={() =>
+                        goToUpdate(
+                            "Votre nom d'utilisateur",
+                            "username",
+                            user.username,
+                            "Nom d'utilisateur"
+                        )
+                    }
+                >
+                    <Text style={styles.text}>Nom d'utilisateur</Text>
+                    <Text style={styles.textInfo}>{user.username}</Text>
+                    <ChevronRightIcon style={styles.icon} fill="#54e096" />
+                </TouchableOpacity>
             </View>
-            
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                    style={[styles.button, styles.shadow]}
+                    onPress={() =>
+                        goToUpdate("Votre email", "email", user.email, "Email")
+                    }
+                >
+                    <Text style={styles.text}>Email</Text>
+                    <Text style={styles.textInfo}>{user.email}</Text>
+                    <ChevronRightIcon style={styles.icon} fill="#54e096" />
+                </TouchableOpacity>
+            </View>
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                    style={[styles.button, styles.shadow]}
+                    onPress={() =>
+                        goToUpdate(
+                            "Votre prénom",
+                            "first_name",
+                            user.first_name,
+                            "Prénom"
+                        )
+                    }
+                >
+                    <Text style={styles.text}>Prénom</Text>
+                    <Text style={styles.textInfo}>{user.first_name}</Text>
+                    <ChevronRightIcon style={styles.icon} fill="#54e096" />
+                </TouchableOpacity>
+            </View>
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                    style={[styles.button, styles.shadow]}
+                    onPress={() =>
+                        goToUpdate(
+                            "Votre nom",
+                            "last_name",
+                            user.last_name,
+                            "Nom d'utilisateur"
+                        )
+                    }
+                >
+                    <Text style={styles.text}>Nom</Text>
+                    <Text style={styles.textInfo}>{user.last_name}</Text>
+                    <ChevronRightIcon style={styles.icon} fill="#54e096" />
+                </TouchableOpacity>
+            </View>
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                    style={[styles.buttonDeco, styles.shadowDeco]}
+                    onPress={() => handleLogout()}
+                >
+                    <Text style={styles.deco}>Déconnexion</Text>
+                </TouchableOpacity>
+            </View>
         </SafeAreaView>
     );
 };
 
 // Variable to store and centralized style for these components
 const styles = StyleSheet.create({
-    safecontainer: tw`flex flex-1 bg-white`,
+    safecontainer: tw`flex flex-1 items-center bg-white`,
     container: tw`flex`,
     buttonContainer: tw`mb-4`,
     title: tw`text-center text-3xl mb-8 text-slate-500`,
     button: tw`p-2 border-[#54e096] border-2 rounded-lg flex-row items-center m-2 w-90`,
     text: tw`font-semibold mr-3 text-slate-500`,
     icon: tw`h-7 w-7`,
-    textInfo : tw` text-slate-500 ml-auto`,
+    textInfo: tw` text-slate-500 ml-auto`,
     shadow: {
-        shadowColor: '#54e096', // IOS
+        shadowColor: "#54e096", // IOS
         shadowOffset: { height: 1, width: 1 }, // IOS
         shadowOpacity: 1, // IOS
         shadowRadius: 1, //IOS
-        backgroundColor: 'white',
+        backgroundColor: "white",
         elevation: 2, // Android
     },
     buttonDeco: tw`p-2 border-[#f00020] border-2 rounded-lg flex-row items-center m-2 w-90`,
     shadowDeco: {
-        shadowColor: '#f00020', // IOS
+        shadowColor: "#f00020", // IOS
         shadowOffset: { height: 1, width: 1 }, // IOS
         shadowOpacity: 1, // IOS
         shadowRadius: 1, //IOS
-        backgroundColor: 'white',
+        backgroundColor: "white",
         elevation: 2, // Android
     },
-    deco : tw`font-semibold mr-3 text-rose-500`
+    deco: tw`font-semibold mr-3 text-rose-500`,
 });
 
 export default UserProfil;

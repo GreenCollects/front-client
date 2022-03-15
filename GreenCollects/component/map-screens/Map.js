@@ -99,26 +99,30 @@ const Map = (props) => {
       };
 
       getAllPoints().catch((err) => console.log(err));
+    } else {
+      setMarkers([])
     }
   }, [radius, props.route.params, token]);
 
   useEffect(() => {
-    const getAllWasteLabel = async () => {
-      const headers = new Headers();
-      headers.append("Accept", "application/json");
-      headers.append("Content-Type", "application/json");
-      headers.append("Authorization", "Token " + token);
+    if (token) {
+      const getAllWasteLabel = async () => {
+        const headers = new Headers();
+        headers.append("Accept", "application/json");
+        headers.append("Content-Type", "application/json");
+        headers.append("Authorization", "Token " + token);
 
-      const data = await getAllWasteType(headers);
-      if (data !== undefined) {
-        const fetched_labels = data?.map((value) => {
-          return value.label;
-        });
-        setWasteLabels(fetched_labels);
-      }
-    };
-    getAllWasteLabel().catch((err) => console.log(err));
-  }, []);
+        const data = await getAllWasteType(headers);
+        if (data !== undefined) {
+          const fetched_labels = data?.map((value) => {
+            return value.label;
+          });
+          setWasteLabels(fetched_labels);
+        }
+      };
+      getAllWasteLabel().catch((err) => console.log(err));
+    }
+  }, [token]);
 
   return (
     <SafeAreaView style={styles.safecontainer}>
