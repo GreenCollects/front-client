@@ -10,7 +10,7 @@ import tw from "twrnc";
 
 import TopNavigation from "../shared/TopNavigation";
 import { DoneIcon } from "../icons/icons";
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native';
 
 import { putCurrentUser } from "../api/account";
 

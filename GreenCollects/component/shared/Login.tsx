@@ -132,9 +132,10 @@ const Login = (props: any) => {
                             Nom d'utilisateur
                         </Text>
                         <Input
-                            placeholder='Username'
+                            placeholder="Nom d'utilisateur"
                             onChangeText={nextValue => handleUsernameFieldChange(nextValue)}
                             status={renderStatus(usernameErr)}
+                            autoCapitalize="none"
                         />
                         <Text style={styles.error}>{usernameErr}</Text>
                     </View>
@@ -144,7 +145,7 @@ const Login = (props: any) => {
                             Mot de passe
                         </Text>
                         <Input
-                            placeholder='Password'
+                            placeholder="Mot de passe"
                             onChangeText={nextValue => handlePasswordFieldChange(nextValue)}
                             status={renderStatus(passwordErr)}
                             secureTextEntry={passwordSecureText}
