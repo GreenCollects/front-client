@@ -37,3 +37,25 @@ export const AlertCicleIcon = (props: any) => (
 export const AddIcon = (props: any) => <Icon {...props} name="plus-outline" />;
 
 export const FilterIcon = (props: any) => <Icon {...props} name="funnel-outline" />;
+
+export const ChevronDownIcon = (props:any) => (
+    <Icon {...props} name='chevron-down-outline' />
+);
+
+export const ChevronRightIcon = (props:any) => (
+    <Icon {...props} name='chevron-right-outline' />
+);
+
+export const CrossIcon = (props : any) => <Icon {...props} name="close-outline" />;
+
+export const ArrowUpIcon = (props : any) => <Icon  {...props} name="arrow-circle-up-outline" />
+
+export const ArrowUpFillIcon = (props : any) => <Icon  {...props} name="arrow-circle-up" />
+
+export const ArrowDownIcon = (props : any) => <Icon  {...props} name="arrow-circle-down-outline" />
+
+export const ArrowDownFillIcon = (props : any) => <Icon  {...props} name="arrow-circle-down" />
+
+export const ShareIcon = (props : any) => <Icon {...props} name="share-outline" />
+
+export const DoneIcon = (props : any) => <Icon {...props} name="done-outline" />

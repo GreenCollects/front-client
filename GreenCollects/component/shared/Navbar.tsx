@@ -1,13 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import tw from "twrnc";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Text } from "react-native";
 import { BottomNavigation, BottomNavigationTab } from "@ui-kitten/components";
 
 import { CalendarIcon, MapIcon, PersonIcon } from "../icons/icons";
 
 const Navbar = ({ navigation, state }: any) => {
     const [selectedIndex, setSelectedIndex] = useState(1);
+
+    useEffect(() => {
+        setSelectedIndex(state.index);
+    }, [state.index]);
 
     const handleSelect = (index: any) => {
         setSelectedIndex(index);
@@ -19,16 +23,61 @@ const Navbar = ({ navigation, state }: any) => {
             selectedIndex={selectedIndex}
             onSelect={handleSelect}
             style={styles.navigation}
+            indicatorStyle={styles.tab}
         >
-            <BottomNavigationTab icon={<CalendarIcon />} title="ORGANISATION" />
-            <BottomNavigationTab icon={<MapIcon />} title="CARTE" />
-            <BottomNavigationTab icon={<PersonIcon />} title="PROFIL" />
+            <BottomNavigationTab
+                icon={
+                    <CalendarIcon
+                        fill={selectedIndex == 0 ? "#54e096" : "#aaa"}
+                    />
+                }
+                title={() => (
+                    <Text
+                        style={{
+                            color: selectedIndex == 0 ? "#54e096" : "#aaa",
+                        }}
+                    >
+                        ORGANISATION
+                    </Text>
+                )}
+            />
+            <BottomNavigationTab
+                icon={
+                    <MapIcon fill={selectedIndex == 1 ? "#54e096" : "#aaa"} />
+                }
+                title={() => (
+                    <Text
+                        style={{
+                            color: selectedIndex == 1 ? "#54e096" : "#aaa",
+                        }}
+                    >
+                        CARTE
+                    </Text>
+                )}
+            />
+            <BottomNavigationTab
+                icon={
+                    <PersonIcon
+                        fill={selectedIndex == 2 ? "#54e096" : "#aaa"}
+                    />
+                }
+                title={() => (
+                    <Text
+                        style={{
+                            color: selectedIndex == 2 ? "#54e096" : "#aaa",
+                        }}
+                    >
+                        PROFIL
+                    </Text>
+                )}
+            />
         </BottomNavigation>
     );
 };
 
 const styles = StyleSheet.create({
     navigation: tw`ios:pb-4`,
+    tab: tw`bg-[#54e096]`,
 });
 
 export default Navbar;

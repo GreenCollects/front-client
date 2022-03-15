@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   StyleSheet,
   View,
@@ -8,17 +8,16 @@ import {
   SafeAreaView,
 } from "react-native";
 
-import MapView, {
-  ProviderPropType,
-  Marker,
-  AnimatedRegion,
-} from "react-native-maps";
-
+import MapView, { ProviderPropType, Marker } from "react-native-maps";
+import { useSelector } from "react-redux";
+import { getPointsInCircle } from "../api/point";
+import { getAllWasteType } from "../api/waste";
 import tw from "twrnc";
 
 import { AddIcon, FilterIcon } from "../icons/icons"
 import FilteringKm from "../filtering/FilteringKm";
 import Filters from "./Filters";
+import CardDetails from "./CardDetails";
 
 const screen = Dimensions.get("window");
 
@@ -28,138 +27,172 @@ const LONGITUDE = 5.724524;
 const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
-//Hardcoded value markers TO REMOVE
-const markers = [
-  {
-    id: 0,
-    amount: 99,
-    coordinate: {
-      latitude: LATITUDE,
-      longitude: LONGITUDE,
-    },
-  },
-  {
-    id: 1,
-    amount: 199,
-    coordinate: {
-      latitude: LATITUDE + 0.004,
-      longitude: LONGITUDE - 0.004,
-    },
-  },
-  {
-    id: 2,
-    amount: 285,
-    coordinate: {
-      latitude: LATITUDE - 0.004,
-      longitude: LONGITUDE - 0.004,
-    },
-  },
-];
+const Map = (props) => {
+  const [coordinate, setCoordinate] = useState({
+    latitude: LATITUDE,
+    longitude: LONGITUDE,
+  });
+  const [radius, setRadius] = useState(5000);
+  const [visibleDetails, setVisibleDetails] = useState(false);
+  const [selectedMarker, setSelectedMarker] = useState({});
+  const [selectedAddress, setSelectedAddress] = useState({});
+  const [markers, setMarkers] = useState([]);
+  const [wasteLabels, setWasteLabels] = useState([]);
+  const map = useRef(null);
+  const token = useSelector((state) => state.authentication.token);
 
-class Map extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      coordinate: new AnimatedRegion({
-        latitude: LATITUDE,
-        longitude: LONGITUDE,
-      }),
-      radius: 5000,
-    };
-  }
-
-  updateRadius = (radius) => {
-    this.setState({
-      radius: radius,
-    });
-    this.animate(radius);
+  const updateRadius = (radius) => {
+    setRadius(radius);
+    animate({ latitude: LATITUDE, longitude: LONGITUDE }, radius, 2000);
   };
 
-  animate(radius) {
+  const animate = (region, radius, time) => {
     let r = {
-      latitude: LATITUDE,
-      longitude: LONGITUDE,
+      latitude: region.latitude,
+      longitude: region.longitude,
       latitudeDelta: (radius / 1000 / 111) * 4,
       longitudeDelta: (radius / 1000 / 111) * ASPECT_RATIO,
     };
-    this.map.animateToRegion(r, 2000);
-  }
-
-  componentDidUpdate = (prevProps) => {
-    const getAddress = async () => {
-      const changeProps = this.props.route?.params?.region;
-      if (
-        changeProps !== undefined &&
-        changeProps !== prevProps?.route?.params?.region
-      ) {
-        const newAddress = await this.map.addressForCoordinate(changeProps);
-        this.props.navigation.push("AddPoint", {
-          region: changeProps,
-          address: newAddress,
-        });
-      }
-    };
-    getAddress().catch((e) => console.log(e));
+    map.current.animateToRegion(r, time);
   };
 
-  render() {
-    return (
-      <SafeAreaView style={styles.safecontainer}>
-        <FilteringKm updateRadius={this.updateRadius} />
-        <View style={styles.mapcontainer}>
-          <MapView
-            provider={this.props.provider}
-            ref={(ref) => {
-              this.map = ref;
-            }}
-            style={styles.map}
-            initialRegion={{
-              latitude: LATITUDE,
-              longitude: LONGITUDE,
-              latitudeDelta: (this.state.radius / 1000 / 111) * 4,
-              longitudeDelta: (this.state.radius / 1000 / 111) * ASPECT_RATIO,
-            }}
+  const zoomAndDisplayDetails = (marker) => {
+    const region = {
+      latitude: marker.latitude,
+      longitude: marker.longitude,
+    };
+    const getAddress = async () => {
+      const address = await map.current.addressForCoordinate(region);
+      setSelectedMarker(marker);
+      setSelectedAddress(address);
+      setVisibleDetails(true);
+    };
+    getAddress().catch((err) => console.log(err));
+    animate(region, 500, 500);
+  };
+
+  const deselectMarkerAndHGideDetails = () => {
+    setSelectedMarker({});
+    setSelectedAddress({});
+    setVisibleDetails(false);
+  };
+
+  const onRegionChange = (region) => {
+    setCoordinate(region);
+  };
+
+  useEffect(() => {
+    if (token) {
+      const getAllPoints = async () => {
+        const headers = new Headers();
+        headers.append("Accept", "application/json");
+        headers.append("Content-Type", "application/json");
+        headers.append("Authorization", "Token " + token);
+
+        const body = {
+          latitude: LATITUDE,
+          longitude: LONGITUDE,
+          radius: radius / 1000,
+        };
+
+        const data = await getPointsInCircle(headers, JSON.stringify(body));
+        setMarkers(data ? data : []);
+      };
+
+      getAllPoints().catch((err) => console.log(err));
+    } else {
+      setMarkers([])
+    }
+  }, [radius, props.route.params, token]);
+
+  useEffect(() => {
+    if (token) {
+      const getAllWasteLabel = async () => {
+        const headers = new Headers();
+        headers.append("Accept", "application/json");
+        headers.append("Content-Type", "application/json");
+        headers.append("Authorization", "Token " + token);
+
+        const data = await getAllWasteType(headers);
+        if (data !== undefined) {
+          const fetched_labels = data?.map((value) => {
+            return value.label;
+          });
+          setWasteLabels(fetched_labels);
+        }
+      };
+      getAllWasteLabel().catch((err) => console.log(err));
+    }
+  }, [token]);
+
+  return (
+    <SafeAreaView style={styles.safecontainer}>
+      <View style={styles.mapcontainer}>
+        <FilteringKm updateRadius={updateRadius} />
+
+        <MapView
+          provider={props.provider}
+          ref={map}
+          style={styles.map}
+          initialRegion={{
+            latitude: LATITUDE,
+            longitude: LONGITUDE,
+            latitudeDelta: (radius / 1000 / 111) * 4,
+            longitudeDelta: (radius / 1000 / 111) * ASPECT_RATIO,
+          }}
+          onPress={deselectMarkerAndHGideDetails}
+          onRegionChange={onRegionChange}
+        >
+          <MapView.Circle
+            center={{ latitude: LATITUDE, longitude: LONGITUDE }}
+            radius={radius}
+            strokeWidth={1}
+            strokeColor={"#1a66ff"}
+            fillColor={"rgba(230,238,255,0.5)"}
+          />
+          {markers.map((marker, i) => {
+            return (
+              <Marker
+                key={i}
+                coordinate={{
+                  latitude: marker.latitude,
+                  longitude: marker.longitude,
+                }}
+                onSelect={() => zoomAndDisplayDetails(marker)}
+                onPress={() => zoomAndDisplayDetails(marker)}
+              />
+            );
+          })}
+        </MapView>
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.addBubble}
+            onPress={() =>
+              this.props.navigation.push("AddCollect", {
+                ParentScreen: "Map",
+              })
+            }
           >
-            <MapView.Circle
-              center={{ latitude: LATITUDE, longitude: LONGITUDE }}
-              radius={this.state.radius}
-              strokeWidth={1}
-              strokeColor={"#1a66ff"}
-              fillColor={"rgba(230,238,255,0.5)"}
-            />
-            {markers.map((marker, i) => {
-              return (
-                <Marker
-                  key={marker.id}
-                  coordinate={marker.coordinate}
-                  title="C'est un Titre ? "
-                  description={"Déscription du point" + marker.id}
-                />
-              );
-            })}
-          </MapView>
-
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.addBubble}
-              onPress={() =>
-                this.props.navigation.push("AddCollect", {
-                  ParentScreen: "Map",
-                })
-              }
-            >
-              <AddIcon style={styles.icon} fill='#fff' />
-            </TouchableOpacity>
-          </View>
-
-          <Filters />
-
+            <AddIcon style={styles.icon} fill='#fff' />
+          </TouchableOpacity>
         </View>
 
-      </SafeAreaView>
-    );
-  }
+        <Filters />
+
+        {visibleDetails && (
+          <CardDetails
+            deselect={deselectMarkerAndHGideDetails}
+            marker={selectedMarker}
+            address={selectedAddress}
+            wasteLabels={wasteLabels}
+          />
+        )}
+
+      </View>
+
+    </SafeAreaView>
+  );
 }
 
 Map.propTypes = {

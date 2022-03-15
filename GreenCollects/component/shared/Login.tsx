@@ -24,7 +24,7 @@ const Login = (props: any) => {
     const [formValidated, setFormValidated] = useState(false);
 
     const USR_NAME_MIN_LENGTH = 1;
-    const PWD_MIN_LENGTH = 5;
+    const PWD_MIN_LENGTH = 1;
 
     const handleLogin = () => {
         const getToken = async () => {
@@ -65,8 +65,6 @@ const Login = (props: any) => {
 
     useEffect(() => {
         if (
-            !usernameErr &&
-            !passwordErr &&
             username.length >= USR_NAME_MIN_LENGTH &&
             password.length >= PWD_MIN_LENGTH
         ) {
@@ -74,31 +72,7 @@ const Login = (props: any) => {
         } else {
             setFormValidated(false);
         }
-    }, [usernameErr, passwordErr]);
-
-    const handleUsernameFieldChange = (newValue: string) => {
-        if (newValue.length < USR_NAME_MIN_LENGTH) {
-            setUsernameErr(
-                `Username to short (min ${USR_NAME_MIN_LENGTH} character)`
-            );
-        } else {
-            setUsernameErr("");
-        }
-
-        setUsername(newValue);
-    };
-
-    const handlePasswordFieldChange = (newValue: string) => {
-        if (newValue.length < PWD_MIN_LENGTH) {
-            setPasswordErr(
-                `Password to short (min ${PWD_MIN_LENGTH} character)`
-            );
-        } else {
-            setPasswordErr("");
-        }
-
-        setPassword(newValue);
-    };
+    }, [username, password]);
 
     const toggleSecureEntry = () => {
         setPasswordSecureText(!passwordSecureText);
@@ -123,46 +97,69 @@ const Login = (props: any) => {
     };
 
     return (
-        <View>
-            <Input
-                placeholder="Username"
-                onChangeText={(nextValue) =>
-                    handleUsernameFieldChange(nextValue)
-                }
-                status={renderStatus(usernameErr)}
-            />
-            <Text style={styles.error}>{usernameErr}</Text>
+        <View style={styles.viewContainer}> 
+            <View style={styles.container}>
+                <Text style={styles.title}>Se connecter</Text>
+                <View>
+                    <View style={styles.formUsername}>
+                        <Text style={styles.usernameLabel}>
+                            Nom d'utilisateur
+                        </Text>
+                        <Input
+                            placeholder="Nom d'utilisateur"
+                            onChangeText={nextValue => setUsername(nextValue)}
+                            status={renderStatus(usernameErr)}
+                            autoCapitalize="none"
+                        />
+                        <Text style={styles.error}>{usernameErr}</Text>
+                    </View>
 
-            <Input
-                placeholder="Password"
-                onChangeText={(nextValue) =>
-                    handlePasswordFieldChange(nextValue)
-                }
-                status={renderStatus(passwordErr)}
-                secureTextEntry={passwordSecureText}
-                accessoryRight={renderIcon}
-            />
-            <Text style={styles.error}>{passwordErr}</Text>
+                    <View style={styles.formPwd}>
+                        <Text style={styles.pwdLabel}>
+                            Mot de passe
+                        </Text>
+                        <Input
+                            placeholder="Mot de passe"
+                            onChangeText={nextValue => setPassword(nextValue)}
+                            status={renderStatus(passwordErr)}
+                            secureTextEntry={passwordSecureText}
+                            accessoryRight={renderIcon}
+                            autoCapitalize="none"
+                        />
+                        <Text style={styles.error}>{passwordErr}</Text>
+                    </View>
 
-            <Button onPress={() => handleLogin()} disabled={!formValidated}>
-                Se connecter
-            </Button>
+                    <View>
+                        <Button style={tailwind`mb-2`} onPress={() => handleLogin()} disabled={!formValidated}>
+                            Se connecter
+                        </Button>
 
-            <Button
-                onPress={() => {
-                    navigation.navigate("Inscription" as never);
-                }}
-            >
-                Créer un compte
-            </Button>
+                        <Button
+                            onPress={() => {navigation.navigate("Inscription" as never)}}
+                        >
+                            Créer un compte
+                        </Button>
+                    </View>
+                    
+
+                </View>
+                
+            </View>
+            
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    viewContainer: tailwind`flex flex-1`,
+    viewContainer: tailwind`flex flex-1 bg-white`,
+    title: tailwind`text-center text-3xl mb-8 text-slate-500`,
+    container: tailwind`flex p-4`,
     error: tailwind`text-red-600`,
     loginContainer: tailwind`w-9/10`,
+    formPwd: tailwind`mb-4`,
+    formUsername: tailwind`mb-4`,
+    usernameLabel: tailwind`text-lg text-slate-500`,
+    pwdLabel: tailwind`text-lg text-slate-500`,
 });
 
 export default Login;

@@ -211,6 +211,20 @@ const CollectCreation = (props: any) => {
                     });
 
                     clearForm();
+
+                    const bodyToSend = {
+                        quantityMax: volumeValue,
+                        label: "Point de collecte : " + printedValue.join(", "),
+                        latitude: props.route.params.region.latitude,
+                        longitude: props.route.params.region.longitude,
+                        wastes: filteredWastesId,
+                        user: user.id,
+                    };
+
+                    props.navigation.navigate("Carte", {
+                        screen: "Map",
+                        params: { newMarker: bodyToSend },
+                    });
                 }
             };
             getData().catch((err) => console.log(err));
@@ -285,11 +299,16 @@ const CollectCreation = (props: any) => {
                             Où la récolte se situera ?
                         </Text>
                         <View style={styles.formLocation}>
-                            <Text style={styles.positionLabel}> Adresse</Text>
-                            <Input
-                                value={locationValue.address}
-                                onPressIn={handlePressIn}
-                            />
+                            <View>
+                                <Text style={styles.positionLabel}>
+                                    {" "}
+                                    Adresse
+                                </Text>
+                                <Input
+                                    value={locationValue.address}
+                                    onPressIn={handlePressIn}
+                                />
+                            </View>
                             <View style={tw`flex flex-row`}>
                                 <View style={tw`flex flex-1`}>
                                     <Text style={styles.positionLabel}>
