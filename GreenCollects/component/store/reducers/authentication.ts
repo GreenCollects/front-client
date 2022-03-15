@@ -1,4 +1,4 @@
-import { LOGIN, LOGOUT, PROFIL } from "../types";
+import { LOGIN, LOGOUT, PROFIL, UPDATE } from "../types";
 
 const INITIAL_STATE = {
     token: '',
@@ -26,6 +26,12 @@ const authenticationReducer = (state: any = INITIAL_STATE, action: any) => {
             var newState: any = INITIAL_STATE
             return newState;
         case PROFIL:
+            var newState: any = {
+                ...state,
+                user: action.value.user
+            }
+            return newState;
+        case UPDATE:
             var newState: any = {
                 ...state,
                 user: action.value.user
