@@ -21,9 +21,14 @@ export const InfoIcon = (props: any) => <Icon {...props} name="info" />;
 
 export const LogoutIcon = (props: any) => <Icon {...props} name="log-out" />;
 
-export const ChevronIcon = (props:any) => (
+export const ChevronDownIcon = (props:any) => (
     <Icon {...props} name='chevron-down-outline' />
 );
+
+export const ChevronRightIcon = (props:any) => (
+    <Icon {...props} name='chevron-right-outline' />
+);
+
 export const EyeOffIcon = (props: any) => <Icon {...props} name="eye-off-outline" />;
 
 export const EyeIcon = (props: any) => <Icon {...props} name="eye-outline" />;
@@ -35,3 +40,7 @@ export const heartIcon = (props : any) => <Icon  {...props} name="heart-outline"
 export const heartFillIcon = (props : any) => <Icon  {...props} name="heart" />;
 export const minusIcon = (props : any) => <Icon  {...props} name="minus-circle-outline" />
 export const minusFillIcon = (props : any) => <Icon  {...props} name="minus-circle" />
+export const ShareIcon = (props: any) => <Icon {...props} name="share-outline" />;
+
+export const DoneIcon = (props: any) => <Icon {...props} name="checkmark-outline" />;
+

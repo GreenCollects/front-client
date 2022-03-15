@@ -81,23 +81,25 @@ const Map = (props) => {
   };
 
   useEffect(() => {
-    const getAllPoints = async () => {
-      const headers = new Headers();
-      headers.append("Accept", "application/json");
-      headers.append("Content-Type", "application/json");
-      headers.append("Authorization", "Token " + token);
+    if (token) {
+      const getAllPoints = async () => {
+        const headers = new Headers();
+        headers.append("Accept", "application/json");
+        headers.append("Content-Type", "application/json");
+        headers.append("Authorization", "Token " + token);
 
-      const body = {
-        latitude: LATITUDE,
-        longitude: LONGITUDE,
-        radius : radius/1000,
+        const body = {
+          latitude: LATITUDE,
+          longitude: LONGITUDE,
+          radius: radius / 1000,
+        };
+
+        const data = await getPointsInCircle(headers, JSON.stringify(body));
+        setMarkers(data ? data : []);
       };
 
-      const data = await getPointsInCircle(headers, JSON.stringify(body));
-      setMarkers(data? data : []);
-    };
-
-    getAllPoints().catch((err) => console.log(err));
+      getAllPoints().catch((err) => console.log(err));
+    }
   }, [radius, props.route.params, token]);
 
   useEffect(() => {
