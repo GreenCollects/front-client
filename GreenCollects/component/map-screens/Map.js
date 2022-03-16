@@ -14,9 +14,12 @@ import { getPointsInCircle } from "../api/point";
 import { getAllWasteType } from "../api/waste";
 import tw from "twrnc";
 
-import addIcon from "../../assets/add-collect-plus.png";
+import { AddIcon, FilterIcon } from "../icons/icons"
 import FilteringKm from "../filtering/FilteringKm";
+import Filters from "./Filters";
 import CardDetails from "./CardDetails";
+
+import Toast from "react-native-root-toast";
 
 const screen = Dimensions.get("window");
 
@@ -37,6 +40,9 @@ const Map = (props) => {
   const [selectedAddress, setSelectedAddress] = useState({});
   const [markers, setMarkers] = useState([]);
   const [wasteLabels, setWasteLabels] = useState([]);
+  const [wastes, setWastes] = useState([])
+  const [filters, setFilters] = useState([])
+  const [filteredMarkers, setFilteredMarkers] = useState([])
   const map = useRef(null);
   const token = useSelector((state) => state.authentication.token);
 
@@ -117,16 +123,40 @@ const Map = (props) => {
           const fetched_labels = data?.map((value) => {
             return value.label;
           });
+
           setWasteLabels(fetched_labels);
+          setWastes(data)
         }
       };
       getAllWasteLabel().catch((err) => console.log(err));
     }
   }, [token]);
 
+  useEffect(() => {
+    const filtered_markers = []
+
+    for (let i = 0; i < markers.length; i++) {
+      for (let j = 0; j < markers[i].wastes.length; j++) {
+        if (filters[markers[i].wastes[j] - 1]) {
+          filtered_markers.push(markers[i])
+          break
+        }
+      }
+    }
+
+    setFilteredMarkers(filtered_markers)
+
+  }, [filters])
+
+  useEffect(() => {
+    setFilters(new Array(wastes.length).fill(false))
+  }, [wastes])
+
   return (
     <SafeAreaView style={styles.safecontainer}>
       <View style={styles.mapcontainer}>
+        <FilteringKm updateRadius={updateRadius} />
+
         <MapView
           provider={props.provider}
           ref={map}
@@ -140,6 +170,7 @@ const Map = (props) => {
           onPress={deselectMarkerAndHGideDetails}
           onRegionChange={onRegionChange}
         >
+
           <MapView.Circle
             center={{ latitude: LATITUDE, longitude: LONGITUDE }}
             radius={radius}
@@ -147,7 +178,21 @@ const Map = (props) => {
             strokeColor={"#1a66ff"}
             fillColor={"rgba(230,238,255,0.5)"}
           />
-          {markers.map((marker, i) => {
+          {filteredMarkers.length !== 0 && filters.toString() !== new Array(wasteLabels.length).fill(false) && filteredMarkers.map((marker, i) => {
+            return (
+              <Marker
+                key={i}
+                coordinate={{
+                  latitude: marker.latitude,
+                  longitude: marker.longitude,
+                }}
+                onSelect={() => zoomAndDisplayDetails(marker)}
+                onPress={() => zoomAndDisplayDetails(marker)}
+              />
+            );
+          })}
+
+          {filteredMarkers.length === 0 && filters.toString() === new Array(wasteLabels.length).fill(false).toString() && markers.map((marker, i) => {
             return (
               <Marker
                 key={i}
@@ -162,20 +207,21 @@ const Map = (props) => {
           })}
         </MapView>
 
-        <FilteringKm updateRadius={updateRadius} />
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity
-            style={[styles.bubble, styles.button]}
-            onPress={() => {
-              props.navigation.push("AddCollect", {
-                ParentScreen: "AddPoint",
-              });
-            }}
+            style={styles.addBubble}
+            onPress={() =>
+              this.props.navigation.push("AddCollect", {
+                ParentScreen: "Map",
+              })
+            }
           >
-            <Image style={styles.icon} source={addIcon} />
+            <AddIcon style={styles.icon} fill='#fff' />
           </TouchableOpacity>
         </View>
+
+        <Filters wastes={wastes} setFilters={setFilters} />
 
         {visibleDetails && (
           <CardDetails
@@ -185,10 +231,12 @@ const Map = (props) => {
             wasteLabels={wasteLabels}
           />
         )}
+
       </View>
-    </SafeAreaView>
+
+    </SafeAreaView >
   );
-};
+}
 
 Map.propTypes = {
   provider: ProviderPropType,
@@ -203,11 +251,10 @@ const styles = StyleSheet.create({
   map: {
     ...StyleSheet.absoluteFillObject,
   },
-  bubble: tw`flex-1 bg-transparent py-3 rounded-full `,
-  button: tw`w-10 pr-12 mx-8`,
+  addBubble: tw`bg-[#54e096] rounded-full mr-4 mb-4`,
   container: tw`flex flex-1 bg-white items-center justify-center`,
   safecontainer: tw`flex flex-1`,
-  icon: tw`w-15 h-15`,
+  icon: tw`w-12 h-12`,
   buttonContainer: tw`bottom-0 right-0 absolute `,
 });
 

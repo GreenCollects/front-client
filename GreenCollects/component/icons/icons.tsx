@@ -21,6 +21,23 @@ export const InfoIcon = (props: any) => <Icon {...props} name="info" />;
 
 export const LogoutIcon = (props: any) => <Icon {...props} name="log-out" />;
 
+export const ChevronIcon = (props: any) => (
+    <Icon {...props} name="chevron-down-outline" />
+);
+export const EyeOffIcon = (props: any) => (
+    <Icon {...props} name="eye-off-outline" />
+);
+
+export const EyeIcon = (props: any) => <Icon {...props} name="eye-outline" />;
+
+export const AlertCicleIcon = (props: any) => (
+    <Icon {...props} name="alert-circle-outline" />
+);
+
+export const AddIcon = (props: any) => <Icon {...props} name="plus-outline" />;
+
+export const FilterIcon = (props: any) => <Icon {...props} name="funnel-outline" />;
+
 export const ChevronDownIcon = (props:any) => (
     <Icon {...props} name='chevron-down-outline' />
 );
@@ -28,12 +45,6 @@ export const ChevronDownIcon = (props:any) => (
 export const ChevronRightIcon = (props:any) => (
     <Icon {...props} name='chevron-right-outline' />
 );
-
-export const EyeOffIcon = (props: any) => <Icon {...props} name="eye-off-outline" />;
-
-export const EyeIcon = (props: any) => <Icon {...props} name="eye-outline" />;
-
-export const AlertCicleIcon = (props: any) => <Icon {...props} name="alert-circle-outline" />;
 
 export const CrossIcon = (props : any) => <Icon {...props} name="close-outline" />;
 
