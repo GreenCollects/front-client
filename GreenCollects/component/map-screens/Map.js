@@ -212,7 +212,7 @@ const Map = (props) => {
           <TouchableOpacity
             style={styles.addBubble}
             onPress={() =>
-              this.props.navigation.push("AddCollect", {
+              props.navigation.push("AddCollect", {
                 ParentScreen: "Map",
               })
             }
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
   container: tw`flex flex-1 bg-white items-center justify-center`,
   safecontainer: tw`flex flex-1`,
   icon: tw`w-12 h-12`,
-  buttonContainer: tw`bottom-0 right-0 absolute `,
+  buttonContainer: tw`z-1 bottom-0 right-0 absolute `,
 });
 
 export default Map;
