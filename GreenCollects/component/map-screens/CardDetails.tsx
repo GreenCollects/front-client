@@ -264,7 +264,7 @@ const CardDetails: FC<PropsType> = ({
 };
 
 const styles = StyleSheet.create({
-    cardDetail: tw`absolute w-5 bottom-0  w-full`,
+    cardDetail: tw`absolute w-5 bottom-0  w-full z-2`,
     container: tw`flex-row justify-around`,
 });
 

@@ -58,4 +58,4 @@ export const ArrowDownFillIcon = (props : any) => <Icon  {...props} name="arrow-
 
 export const ShareIcon = (props : any) => <Icon {...props} name="share-outline" />
 
-export const DoneIcon = (props : any) => <Icon {...props} name="done-outline" />
+export const DoneIcon = (props : any) => <Icon {...props} name="checkmark-outline" />

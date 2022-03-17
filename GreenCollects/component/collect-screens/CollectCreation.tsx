@@ -286,7 +286,7 @@ const CollectCreation = (props: any) => {
                     </View>
                     <View style={styles.formVolume}>
                         <Text style={styles.volumeLabel}>
-                            Volume de la récolte (Kg)
+                            Poids de la récolte (Kg)
                         </Text>
                         <Input
                             placeholder="20"
@@ -307,6 +307,7 @@ const CollectCreation = (props: any) => {
                                 <Input
                                     value={locationValue.address}
                                     onPressIn={handlePressIn}
+                                    editable={false}
                                 />
                             </View>
                             <View style={tw`flex flex-row`}>
@@ -363,7 +364,7 @@ const styles = StyleSheet.create({
     volumeLabel: tw`text-lg text-slate-500`,
     positionLabel: tw`text-lg text-slate-500`,
     error: tw`bg-orange-300 mb-3 p-3`,
-    errorText: tw`text-white text-center text-lg`,
+    errorText: tw`text-white text-center`,
 });
 
 export default CollectCreation;

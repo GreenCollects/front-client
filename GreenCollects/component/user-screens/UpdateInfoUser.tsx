@@ -8,7 +8,6 @@ import { RootState } from "../store/Store";
 
 import tw from "twrnc";
 
-import TopNavigation from "../shared/TopNavigation";
 import { DoneIcon } from "../icons/icons";
 import { TouchableOpacity } from 'react-native';
 
@@ -31,7 +30,7 @@ const Username = (props:any) => {
     const handleChange = (nextValue:any) => {
         setValue(nextValue);
 
-        if(fieldValue == nextValue){
+        if(fieldValue === nextValue){
             setVisible(false)
         }
         else{
@@ -84,7 +83,7 @@ const Username = (props:any) => {
                 <View style={tw`flex flex-row justify-center`}>
                     <Text style={styles.title}>{fieldDescription}</Text>
                     {
-                    visible == true ?
+                    visible === true ?
                     <TouchableOpacity onPress={()=> validChange()}>
                         <DoneIcon style={styles.icon} fill='#54e096'/>
                     </TouchableOpacity> 

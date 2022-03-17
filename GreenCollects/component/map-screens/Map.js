@@ -213,7 +213,7 @@ const Map = (props) => {
             style={styles.addBubble}
             onPress={() =>
               props.navigation.push("AddCollect", {
-                ParentScreen: "Map",
+                ParentScreen: "AddPoint",
               })
             }
           >

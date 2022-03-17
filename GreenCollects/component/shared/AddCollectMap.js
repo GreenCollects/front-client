@@ -76,7 +76,7 @@ const AddCollectMap = (props) => {
             style={[styles.bubble, styles.button]}
             onPress={handlePress}
           >
-            <Text>Choisir cet emplacement </Text>
+            <Text style={styles.choose}>Choisir cet emplacement </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -97,13 +97,14 @@ const styles = StyleSheet.create({
   map: {
     ...StyleSheet.absoluteFillObject,
   },
-  bubble: tw`flex-1 bg-white py-3 rounded-full `,
+  bubble: tw`flex-1 bg-white py-3 rounded-full bg-[#54e096]`,
   button: tw`w-80 px-14 mx-10`,
   buttonContainer: tw`flex-row my-20 bg-transparent`,
   container: tw`flex flex-1 bg-white items-center justify-center`,
   safecontainer: tw`flex flex-1`,
   markerFixed: tw`top-50% -mt-10 absolute`,
   marker: tw`w-10 h-10`,
+  choose : tw`text-center text-white font-bold`
 });
 
 export default AddCollectMap;
