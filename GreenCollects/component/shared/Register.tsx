@@ -1,9 +1,7 @@
 import { Input, Button, Text } from "@ui-kitten/components";
-import { useEffect, useState } from "react";
-import { Alert, StyleSheet, View } from "react-native";
-import environment from "../../environment";
+import React, { useEffect, useState } from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
 import tailwind from "twrnc";
-import { useNavigation } from "@react-navigation/native";
 import { TouchableWithoutFeedback } from "@ui-kitten/components/devsupport";
 import { EyeIcon, EyeOffIcon } from "../icons/icons";
 import { register } from "../api/account";
@@ -183,7 +181,7 @@ const Register = (props: any) => {
     };
 
     return (
-        <View style={styles.viewContainer}> 
+        <ScrollView style={styles.viewContainer}> 
             <View style={styles.container}>
                 <Text style={styles.title}>
                     S'inscrire
@@ -193,9 +191,10 @@ const Register = (props: any) => {
                     <View style={styles.usernameForm}>
                         <Text style={styles.usernameLabel}>Nom d'utilisateur</Text>      
                         <Input
-                            placeholder='Username'
+                            placeholder="Nom d'utilisateur"
                             onChangeText={nextValue => handleUsernameFieldChange(nextValue)}
                             status={renderStatus(usernameErr)}
+                            autoCapitalize="none"
                         />
                         <Text style={styles.error}>{usernameErr}</Text>
                     </View>
@@ -208,6 +207,7 @@ const Register = (props: any) => {
                             placeholder='Email'
                             onChangeText={nextValue => handleEmailFieldChange(nextValue)}
                             status={renderStatus(emailErr)}
+                            autoCapitalize="none"
                         />
                         <Text style={styles.error}>{emailErr}</Text>
                     </View>
@@ -215,7 +215,7 @@ const Register = (props: any) => {
                     <View style={styles.firstNameForm}> 
                         <Text style={styles.firstNameLabel}>Prénom</Text>
                         <Input
-                            placeholder='First Name'
+                            placeholder='Prénom'
                             onChangeText={nextValue => handleFirstNameFieldChange(nextValue)}
                             status={renderStatus(first_nameErr)}
                         />
@@ -225,7 +225,7 @@ const Register = (props: any) => {
                     <View style={styles.lastNameForm}> 
                         <Text style={styles.lastNameLabel}>Nom</Text>           
                         <Input
-                            placeholder='Last Name'
+                            placeholder='Nom'
                             onChangeText={nextValue => handleLastNameFieldChange(nextValue)}
                             status={renderStatus(last_nameErr)}
                         />
@@ -238,7 +238,7 @@ const Register = (props: any) => {
                         </Text>
                         <Input
                             value={password}
-                            placeholder='Password'
+                            placeholder='Mot de passe'
                             onChangeText={nextValue => handlePasswordFieldChange(nextValue)}
                             status={renderStatus(passwordErr)}
                             secureTextEntry={passwordSecureText}
@@ -251,7 +251,7 @@ const Register = (props: any) => {
                         <Text style={styles.confirmPwdLabel}>Confirmer le mot de passe</Text>
                         <Input
                             value={reapeatPassword}
-                            placeholder='Repeat password'
+                            placeholder='Confirmer le mot de passe'
                             onChangeText={nextValue => handleRepeatPasswordFieldChange(nextValue)}
                             status={renderStatus(reapeatPasswordErr)}
                             secureTextEntry={true}
@@ -270,7 +270,7 @@ const Register = (props: any) => {
 
                 </View>
             </View>
-        </View>
+        </ScrollView>
     );
 };
 

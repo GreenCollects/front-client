@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import tw from "twrnc";
@@ -248,6 +248,7 @@ const CollectCreation = (props: any) => {
 
     return (
         <SafeAreaView style={styles.safecontainer}>
+            <ScrollView>
             <View>
                 <TopNavigation title="Organisation" />
             </View>
@@ -346,6 +347,7 @@ const CollectCreation = (props: any) => {
                     </Button>
                 </View>
             </View>
+            </ScrollView>
         </SafeAreaView>
     );
 };
